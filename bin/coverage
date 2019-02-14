@@ -1,0 +1,11 @@
+#!/bin/bash
+
+lcov --no-external -c -i -d . -o pre.dat
+
+${@}
+
+lcov --no-external -c -d . -o post.dat
+lcov -a pre.dat -a post.dat -o coverage.dat
+genhtml -o coverage/ -t "Hive coverage" --num-spaces 4 coverage.dat
+
+xdg-open coverage/index.html
