@@ -12,7 +12,7 @@
             "deferralDurations": [1, 120, 480]
         },
         "pre-reboot": {
-            "message": "Your system needs to install patches.",
+            "message": "Your system must reboot to finish installing patches.",
             "maxDeferrals": 2,
             "deferralDurations": [60, 120, 480]
         }
