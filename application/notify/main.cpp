@@ -2,13 +2,11 @@
 #include <iostream>
 #include <cstdlib>
 #include <string>
-using namespace std;
-
 #include <chrono>
 #include <thread>
+
 #include <getopt.h>
 #include <unistd.h>
-
 #include <gtk/gtk.h>
 #include <libnotify/notify.h>
 
@@ -30,11 +28,11 @@ void teardown(void)
 
 void user_function(void)
 {
-    cout << "OK" << endl;
+    std::cout << "OK" << std::endl;
     teardown();
 }
 
-void Close(NotifyNotification* notification, char* action, gpointer)
+void Close(NotifyNotification*, char* action, gpointer)
 {
     if (std::string("default") == action)
     {
@@ -42,23 +40,21 @@ void Close(NotifyNotification* notification, char* action, gpointer)
         return;
     }
 
-    int closeReason = notify_notification_get_closed_reason(notification);
-    cout << "Called close with " << notification << ", and action " << action << "; closed because of: " << closeReason << endl;
-
+    std::cout << action << std::endl;
     teardown();
 }
 
 void usage(void)
 {
-    cerr << "Usage:" << endl
-         << "    " << "notify [options] <TITLE> <DESCRIPTION>" << endl
-         << endl
-         << "Options:" << endl
-         << "    " << "--now-text|-n         The text to display for the default 'now' option, indicating to take immediate action." << endl
-         << "    " << "--later-text|-l       The text to display for the later action, indicating that a deferral is desired." << endl
-         << "    " << "--deferral-period|-d  The deferral period, in hours, until we should try again." << endl
-         << "    " << "--timeout|-t          Timeout for the notification, in minutes." << endl
-         << "    " << "--icon|-i             The desired icon name to be used." << endl;
+    std::cerr << "Usage:" << std::endl
+         << "    " << "notify [options] <TITLE> <DESCRIPTION>" << std::endl
+         << std::endl
+         << "Options:" << std::endl
+         << "    " << "--now-text|-n         The text to display for the default 'now' option, indicating to take immediate action." << std::endl
+         << "    " << "--later-text|-l       The text to display for the later action, indicating that a deferral is desired." << std::endl
+         << "    " << "--deferral-period|-d  The deferral period, in hours, until we should try again." << std::endl
+         << "    " << "--timeout|-t          Timeout for the notification, in minutes." << std::endl
+         << "    " << "--icon|-i             The desired icon name to be used." << std::endl;
 }
 
 int main(int argc, char** argv)
