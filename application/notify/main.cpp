@@ -1,6 +1,4 @@
-#include <ios>
 #include <iostream>
-#include <cstdlib>
 #include <string>
 #include <chrono>
 #include <thread>
@@ -70,11 +68,11 @@ int main(int argc, char** argv)
     bool laterSet(false);
 
     static struct option longOptions[] = {
-        {"now-text", 1, 0, 'n'},
-        {"later-text", 1, 0, 'l'},
-        {"deferral-period", 1, 0, 'd'},
-        {"timeout", 1, 0, 't'},
-        {"icon", 1, 0, 'i'}
+        {"now-text",        required_argument, 0, 'n'},
+        {"later-text",      required_argument, 0, 'l'},
+        {"deferral-period", required_argument, 0, 'd'},
+        {"timeout",         required_argument, 0, 't'},
+        {"icon",            required_argument, 0, 'i'}
     };
 
     int optionIndex(0);
