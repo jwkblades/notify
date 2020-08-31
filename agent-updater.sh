@@ -103,6 +103,22 @@ mayRequireReboot()
     return 1 # Won't reboot
 }
 
+getUsername()
+{
+    who | head -1 | awk '{print $1}'
+}
+
+getDisplay()
+{
+    who | head -1 | awk '{print $2}'
+}
+
+getUID()
+{
+    id -u "${1}"
+}
+
+
 prePatchNotification()
 {
     local message=""
@@ -118,9 +134,13 @@ prePatchNotification()
 
     local deferrals="$(retrieveNotificationMessage '.notifications["pre-patch"].maxDeferrals' 0)"
     local deferralTime="$(retrieveNotificationMessage '.notifications["pre-patch"].deferrals[0]' 60)"
+    local title="Updates are ready to install"
+    local user="$(getUsername)"
+    local display="$(getDisplay)"
+    local uid="$(getUID "${user}")"
     while [[ ${deferrals} -gt 0 ]]; do 
         log "About to run notification"
-        result="$(pkexec --user jblades /home/jblades/Documents/cpp/notify/agent-notifier.sh software-update-available "Install Now" "Install Later" "${deferralTime}" "Updates are ready to install." "${message}")"
+        result="$(su -c "DISPLAY=${display} XDG_RUNTIME_DIR=/run/user/${uid} /home/jblades/Documents/cpp/notify/notify --icon software-update-available --now-text 'Install Now' --later-text 'Install Later' -d '${deferralTime}' '${title}' '${message}'" ${user})"
         log "Retrieved result from notification of '${result}'"
 
         case "${result}" in
