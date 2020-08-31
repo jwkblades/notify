@@ -1,0 +1,20 @@
+{
+    "policy": {
+        "type": "patch-all",
+        "enabled": ["vulkan", "mlt"],
+        "disabled": ["libdrm"]
+    },
+    "notifications": {
+        "pre-patch": {
+            "message": "Your system needs to install patches.",
+            "messageWithReboot": "Your system needs to install patches and may require a reboot.",
+            "maxDeverrals": 3,
+            "deferralDurations": [60, 120, 480]
+        },
+        "pre-reboot": {
+            "message": "Your system needs to install patches.",
+            "maxDeverrals": 2,
+            "deferralDurations": [60, 120, 480]
+        }
+    }
+}
