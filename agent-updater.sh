@@ -133,12 +133,13 @@ prePatchNotification()
     log "Determine the notification mesage of '${message}'"
 
     local deferrals="$(retrieveNotificationMessage '.notifications["pre-patch"].maxDeferrals' 0)"
-    local deferralTime="$(retrieveNotificationMessage '.notifications["pre-patch"].deferrals[0]' 60)"
+    local deferralTime="$(retrieveNotificationMessage '.notifications["pre-patch"].deferralDurations[0]' 60)"
     local title="Updates are ready to install"
     local user="$(getUsername)"
     local display="$(getDisplay)"
     local uid="$(getUID "${user}")"
     while [[ ${deferrals} -gt 0 ]]; do 
+        deferrals=$(( ${deferrals} - 1 ))
         log "About to run notification"
         result="$(su -c "DISPLAY=${display} XDG_RUNTIME_DIR=/run/user/${uid} /home/jblades/Documents/cpp/notify/notify --icon software-update-available --now-text 'Install Now' --later-text 'Install Later' -d '${deferralTime}' '${title}' '${message}'" ${user})"
         log "Retrieved result from notification of '${result}'"

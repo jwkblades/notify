@@ -1,7 +1,7 @@
 {
     "policy": {
         "type": "patch-all",
-        "enabled": ["vulkan", "mlt"],
+        "enabled": ["vulkan-loader", "mlt"],
         "disabled": ["libdrm"]
     },
     "notifications": {
@@ -9,7 +9,7 @@
             "message": "Your system needs to install patches.",
             "messageWithReboot": "Your system needs to install patches and may require a reboot.",
             "maxDeferrals": 3,
-            "deferralDurations": [60, 120, 480]
+            "deferralDurations": [1, 120, 480]
         },
         "pre-reboot": {
             "message": "Your system needs to install patches.",
