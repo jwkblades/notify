@@ -118,30 +118,25 @@ getUID()
     id -u "${1}"
 }
 
-
-prePatchNotification()
+runNotifications()
 {
-    local message=""
+    local path="${1}"
+    local icon="${2}"
+    local now="${3}"
+    local later="${4}"
+    local title="${5}"
+    local message="${6}"
 
-    log "Pre-patch notifications"
-    if mayRequireReboot; then
-        message="$(retrieveNotificationMessage '.notifications["pre-patch"].messageWithReboot' "Your system needs to patch, a reboot may be required afterwards.")"
-    else
-        message="$(retrieveNotificationMessage '.notifications["pre-patch"].message' "Your system needs to patch.")"
-    fi
-
-    log "Determine the notification mesage of '${message}'"
-
-    local deferrals="$(retrieveNotificationMessage '.notifications["pre-patch"].maxDeferrals' 0)"
-    local deferralTime="$(retrieveNotificationMessage '.notifications["pre-patch"].deferralDurations[0]' 60)"
-    local title="Updates are ready to install"
+    local deferrals="$(retrieveNotificationMessage "${path}.maxDeferrals" 0)"
+    local deferralTime="$(retrieveNotificationMessage "${path}.deferralDurations[0]" 60)"
     local user="$(getUsername)"
     local display="$(getDisplay)"
     local uid="$(getUID "${user}")"
+
     while [[ ${deferrals} -gt 0 ]]; do 
         deferrals=$(( ${deferrals} - 1 ))
-        log "About to run notification"
-        result="$(su -c "DISPLAY=${display} XDG_RUNTIME_DIR=/run/user/${uid} /home/jblades/Documents/cpp/notify/notify --icon software-update-available --now-text 'Install Now' --later-text 'Install Later' -d '${deferralTime}' '${title}' '${message}'" ${user})"
+        log "About to run notification, ${deferrals} notifications remaining."
+        result="$(su -c "DISPLAY=${display} XDG_RUNTIME_DIR=/run/user/${uid} ./notify --icon '${icon}' --now-text '${now}' --later-text '${later}' -d '${deferralTime}' '${title}' '${message}'" ${user})"
         log "Retrieved result from notification of '${result}'"
 
         case "${result}" in
@@ -159,6 +154,20 @@ prePatchNotification()
     done
 }
 
+prePatchNotification()
+{
+    log "Pre-patch notifications"
+    local message=""
+    if mayRequireReboot; then
+        message="$(retrieveNotificationMessage '.notifications["pre-patch"].messageWithReboot' "Your system needs to patch, a reboot may be required afterwards.")"
+    else
+        message="$(retrieveNotificationMessage '.notifications["pre-patch"].message' "Your system needs to patch.")"
+    fi
+
+    log "Determine the notification mesage of '${message}'"
+    runNotifications '.notifications["pre-patch"]' "software-update-available" "Install Now" "Install Later" "Updates are ready to install" "${message}"
+}
+
 patch()
 {
     log "We want to patch ${1}"
@@ -167,17 +176,28 @@ patch()
 machineNeedsRestarting()
 {
     log "Checking if we need to reboot."
+    dnf needs-restarting -r &>/dev/null
+    local ret="${?}"
+    log "Returned '${ret}'"
+    if [[ ${ret} -eq 1 ]]; then
+        log "Reboot required"
+        return 0
+    fi
+
     return 1
 }
 
 preRebootNotification()
 {
     log "Pre-reboot notification"
+    local message="$(retrieveNotificationMessage '.notifications["pre-reboot"].message' "Your system needs to reboot to complete patching.")"
+    runNotifications '.notifications["pre-reboot"]' "system-reboot" "Reboot Now" "Reboot Later" "Updates pending reboot" "${message}"
 }
 
 rebootMachine()
 {
     log "Reboot the machine here."
+    /home/jblades/bin/kjump -- +3
 }
 
 main()
