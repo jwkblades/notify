@@ -170,7 +170,8 @@ prePatchNotification()
 
 patch()
 {
-    log "We want to patch ${1}"
+    log "Patching ${1}"
+    dnf update -y ${1}
 }
 
 machineNeedsRestarting()
