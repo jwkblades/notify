@@ -118,6 +118,17 @@ getUID()
     id -u "${1}"
 }
 
+timestamp()
+{
+    local year="$(date +"%Y")"
+    local dayOfYear="$(date +"%j")"
+    local hour="$(date +"%H")"
+    local minute="$(date +"%M")"
+    local second="$(date +"%S")"
+
+    echo -n "$(( (${year} * 31557600) + (${dayOfYear} * 86400) + (${hour} * 3600) + (${minute} * 60) + ${second} ))"
+}
+
 runNotifications()
 {
     local path="${1}"
@@ -136,6 +147,7 @@ runNotifications()
     while [[ ${deferrals} -gt 0 ]]; do 
         deferrals=$(( ${deferrals} - 1 ))
         log "About to run notification, ${deferrals} notifications remaining."
+        local start="$(timestamp)"
         result="$(su -c "DISPLAY=${display} XDG_RUNTIME_DIR=/run/user/${uid} ./notify --icon '${icon}' --now-text '${now}' --later-text '${later}' -d '${deferralTime}' '${title}' '${message}'" ${user})"
         log "Retrieved result from notification of '${result}'"
 
@@ -144,7 +156,16 @@ runNotifications()
                 return 0
                 ;;
             OK)
-                sleep 900 # 15 minutes, it won't start exactly on time, but close enough for now
+                # We want to know how long the notification was up before being closed. By default, the notification
+                # will timeout after 15 minutes, which is 900 seconds, so take 900 and subtract the duration of time
+                # (in seconds) that the notification was open. If the result is positive, then we still have time
+                # before the 15-minute timeout, and the notification was dismissed early by the user, but we still want
+                # to patch after that 15 minute mark. So, sleep for the remainder and then continue.
+                local sleepDuration="$(( 900 - ($(timestamp) - ${start}) ))"
+                if [[ ${sleepDuration} -gt 0 ]]; then
+                    log "Sleeping for ${sleepDuration} seconds before continuing."
+                    sleep "${sleepDuration}"
+                fi
                 return 0
                 ;;
             *)
