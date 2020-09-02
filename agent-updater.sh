@@ -122,9 +122,9 @@ timestamp()
 {
     local year="$(date +"%Y")"
     local dayOfYear="$(date +"%j")"
-    local hour="$(date +"%H")"
-    local minute="$(date +"%M")"
-    local second="$(date +"%S")"
+    local hour="$(date +"%_H")"
+    local minute="$(date +"%_M")"
+    local second="$(date +"%_S")"
 
     echo -n "$(( (${year} * 31557600) + (${dayOfYear} * 86400) + (${hour} * 3600) + (${minute} * 60) + ${second} ))"
 }
