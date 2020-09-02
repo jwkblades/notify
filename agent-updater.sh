@@ -97,7 +97,7 @@ retrieveNotificationMessage()
 
 mayRequireReboot()
 {
-    if [[ -z "$(retrieveNotificationMessage '.notifications["pre-reboot"].message')" ]]; then
+    if [[ -z "$(retrieveNotificationMessage '.policy.autoReboot')" ]]; then
         return 0 # May reboot
     fi
     return 1 # Won't reboot

@@ -2,7 +2,8 @@
     "policy": {
         "type": "patch-all",
         "enabled": ["vulkan-loader", "mlt"],
-        "disabled": ["libdrm"]
+        "disabled": ["libdrm"],
+        "autoReboot": true
     },
     "notifications": {
         "pre-patch": {
@@ -13,8 +14,8 @@
         },
         "pre-reboot": {
             "message": "Your system must reboot to finish installing patches.",
-            "maxDeferrals": 2,
-            "deferralDurations": [60, 120, 480]
+            "maxDeferrals": 3,
+            "deferralDurations": [1, 120, 480]
         }
     }
 }
