@@ -148,7 +148,11 @@ runNotifications()
         deferrals=$(( ${deferrals} - 1 ))
         log "About to run notification, ${deferrals} notifications remaining."
         local start="$(timestamp)"
-        result="$(su -c "DISPLAY=${display} XDG_RUNTIME_DIR=/run/user/${uid} ./notify --icon '${icon}' --now-text '${now}' --later-text '${later}' -d '${deferralTime}' '${title}' '${message}'" ${user})"
+        if [[ ${deferrals} -eq 1 ]]; then
+            result="$(su -c "DISPLAY=${display} XDG_RUNTIME_DIR=/run/user/${uid} ./notify --icon '${icon}' -o '${now}' -v 'NOW' '${title}' '${message}'" ${user})"
+        else
+            result="$(su -c "DISPLAY=${display} XDG_RUNTIME_DIR=/run/user/${uid} ./notify --icon '${icon}' -o '${later}' -v '${deferralTime}' -o '${now}' -v 'NOW' '${title}' '${message}'" ${user})"
+        fi
         log "Retrieved result from notification of '${result}'"
 
         case "${result}" in
@@ -218,8 +222,8 @@ preRebootNotification()
 
 rebootMachine()
 {
-    log "Reboot the machine here."
-    /home/jblades/bin/kjump -- +3
+    log "Reboot the machine"
+    reboot
 }
 
 main()
