@@ -38,7 +38,30 @@ fi
 #         }
 #     }
 # }
-policyInfo="${1}"
+policyInfo="$(cat <<EOD
+{
+    "policy": {
+        "type": "patch-only",
+        "enabled": ["mlt"],
+        "disabled": ["libdrm", "vulkan-loader"],
+        "autoReboot": true
+    },
+    "notifications": {
+        "pre-patch": {
+            "message": "Your system needs to install patches.",
+            "messageWithReboot": "Your system needs to install patches and may require a reboot.",
+            "maxDeferrals": 3,
+            "deferralDurations": [1, 120, 480]
+        },
+        "pre-reboot": {
+            "message": "Your system must reboot to finish installing patches.",
+            "maxDeferrals": 3,
+            "deferralDurations": [60, 120, 480]
+        }
+    }
+}
+EOD
+)"
 
 hasUpdates()
 {
@@ -228,7 +251,7 @@ rebootMachine()
 
 main()
 {
-    local policyType="$(echo ${policyInfo} | jq -r '.policy.type')"
+    local policyType="$(echo "${policyInfo}" | jq -r '.policy.type')"
 
     log "Policy type: '${policyType}'"
 
