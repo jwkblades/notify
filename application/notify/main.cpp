@@ -24,17 +24,17 @@ void teardown(void)
     gtk_main_quit();
 }
 
-void user_function(void)
+void defaultExit(void)
 {
     std::cout << "OK" << std::endl;
     teardown();
 }
 
-void Close(NotifyNotification*, char* action, gpointer)
+void close(NotifyNotification*, char* action, gpointer)
 {
     if (std::string("default") == action)
     {
-        user_function();
+        defaultExit();
         return;
     }
 
@@ -48,39 +48,35 @@ void usage(void)
          << "    " << "notify [options] <TITLE> <DESCRIPTION>" << std::endl
          << std::endl
          << "Options:" << std::endl
-         << "    " << "--now-text|-n         The text to display for the default 'now' option, indicating to take immediate action." << std::endl
-         << "    " << "--later-text|-l       The text to display for the later action, indicating that a deferral is desired." << std::endl
-         << "    " << "--deferral-period|-d  The deferral period, in hours, until we should try again." << std::endl
-         << "    " << "--timeout|-t          Timeout for the notification, in minutes." << std::endl
-         << "    " << "--icon|-i             The desired icon name to be used." << std::endl;
+         << "    " << "--option|-o     An option, up to 3 are allowed. Options are the display string shown on a notification button." << std::endl
+         << "    " << "--value|-v      An value, up to 3 are allowed. Values are the returned value when a notification option is selected." << std::endl
+         << "    " << "--timeout|-t    Timeout for the notification, in minutes." << std::endl
+         << "    " << "--icon|-i       The desired icon name to be used." << std::endl;
 }
 
 int main(int argc, char** argv)
 {
-    std::string title("");
-    std::string description("");
-    std::string nowOption("Now");
-    std::string laterOption("Later");
-    std::string laterValue("1");
-    std::string nowValue("NOW");
+    const char* title(NULL);
+    const char* description(NULL);
+    const char* options[3] = {NULL, NULL, NULL};
+    const char* values[3] = {NULL, NULL, NULL};
+    int optIndex = 0;
+    int valIndex = 0;
     std::string icon("dialog-information");
     size_t timeoutMinutes(15);
-    bool laterSet(false);
 
     static struct option longOptions[] = {
-        {"now-text",        required_argument, 0, 'n'},
-        {"later-text",      required_argument, 0, 'l'},
-        {"deferral-period", required_argument, 0, 'd'},
-        {"timeout",         required_argument, 0, 't'},
-        {"icon",            required_argument, 0, 'i'}
+        {"option",       required_argument, 0, 'o'},
+        {"value",        required_argument, 0, 'v'},
+        {"timeout",      required_argument, 0, 't'},
+        {"icon",         required_argument, 0, 'i'}
     };
 
-    int optionIndex(0);
     int index(1);
 
     while (1)
     {
-        int c = getopt_long(argc, argv, "n:l:d:t:", longOptions, &optionIndex);
+        int c = getopt_long(argc, argv, "i:o:t:v:", longOptions, NULL);
         if (c == -1)
         {
             break;
@@ -88,20 +84,22 @@ int main(int argc, char** argv)
 
         switch (c)
         {
-            case 'n':
-                nowOption = optarg;
-                index += 2;
-                break;
-            case 'l':
-                laterOption = optarg;
-                index += 2;
-                break;
-            case 'd':
-                if (!laterSet)
+            case 'o':
+                if (optIndex >= 3)
                 {
-                    laterValue = optarg;
-                    laterSet = true;
+                    std::cerr << "Too many options specified. Only 3 allowed." << std::endl;
+                    break;
                 }
+                options[optIndex++] = optarg;
+                index += 2;
+                break;
+            case 'v':
+                if (valIndex >= 3)
+                {
+                    std::cerr << "Too many values specified. Only 3 allowed." << std::endl;
+                    break;
+                }
+                values[valIndex++] = optarg;
                 index += 2;
                 break;
             case 't':
@@ -127,17 +125,24 @@ int main(int argc, char** argv)
     title = argv[index];
     description = argv[index + 1];
 
+    if (optIndex > valIndex)
+    {
+        std::cerr << "The number of options and values should be the same. Using the lesser." << std::endl;
+        optIndex = valIndex;
+    }
 
     gtk_init(&argc, &argv);
 
 	notify_init("agentNotifier");
-	NotifyNotification* notification = notify_notification_new(title.c_str(), description.c_str(), icon.c_str());
+	NotifyNotification* notification = notify_notification_new(title, description, icon.c_str());
 
-    notify_notification_add_action(notification, laterValue.c_str(), laterOption.c_str(), Close, NULL, NULL);
-    notify_notification_add_action(notification, nowValue.c_str(), nowOption.c_str(), Close, NULL, NULL);
+    for (int i = 0; i < optIndex; ++i)
+    {
+        notify_notification_add_action(notification, values[i], options[i], close, NULL, NULL);
+    }
 
-    notify_notification_add_action(notification, "default", "OK", Close, NULL, NULL);
-    g_signal_connect(G_OBJECT(notification), "closed", user_function, notification);
+    notify_notification_add_action(notification, "default", "OK", close, NULL, NULL);
+    g_signal_connect(G_OBJECT(notification), "closed", defaultExit, notification);
 
     notify_notification_set_urgency(notification, NOTIFY_URGENCY_CRITICAL);
 
@@ -159,7 +164,7 @@ int main(int argc, char** argv)
 
         if (timedOut)
         {
-            user_function();
+            defaultExit();
         }
     });
 	notify_notification_show(notification, NULL);
