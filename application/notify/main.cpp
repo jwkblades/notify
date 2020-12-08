@@ -26,7 +26,7 @@ void teardown(void)
 
 void defaultExit(void)
 {
-    std::cout << "OK" << std::endl;
+    std::cout << "DEFAULT" << std::endl;
     teardown();
 }
 
@@ -54,17 +54,117 @@ void usage(void)
          << "    " << "--icon|-i       The desired icon name to be used." << std::endl;
 }
 
+class Configuration
+{
+public:
+    const char* title;
+    const char* description;
+    const char* icon;
+    const char* options[3];
+    const char* values[3];
+    size_t timeoutMinutes;
+    bool mIsValid;
+    int optIndex;
+
+    Configuration(int argc, char** argv, const char* shortOptions, struct option* longOptions):
+        title(NULL),
+        description(NULL),
+        icon("dialog-information"),
+        options(),
+        values(),
+        timeoutMinutes(0),
+        mIsValid(false)
+    {
+        int valIndex = 0;
+        int index(1);
+
+        title = argv[index];
+        description = argv[index + 1];
+
+        while (1)
+        {
+            int c = getopt_long(argc, argv, shortOptions, longOptions, NULL);
+            if (c == -1)
+            {
+                break;
+            }
+
+            switch (c)
+            {
+                case 'o':
+                    if (optIndex >= 3)
+                    {
+                        std::cerr << "Too many options specified. Only 3 allowed." << std::endl;
+                        break;
+                    }
+                    options[optIndex++] = optarg;
+                    index += 2;
+                    break;
+                case 'v':
+                    if (valIndex >= 3)
+                    {
+                        std::cerr << "Too many values specified. Only 3 allowed." << std::endl;
+                        break;
+                    }
+                    values[valIndex++] = optarg;
+                    index += 2;
+                    break;
+                case 't':
+                    timeoutMinutes = std::stoull(optarg);
+                    index += 2;
+                    break;
+                case 'i':
+                    icon = optarg;
+                    index += 2;
+                    break;
+                default:
+                    return;
+            }
+        }
+
+        if (index + 2 == argc)
+        {
+            mIsValid = true;
+        }
+
+        if (optIndex > valIndex)
+        {
+            std::cerr << "The number of options and values should be the same. Using the lesser." << std::endl;
+            optIndex = valIndex;
+        }
+    }
+
+    [[nodiscard]] inline bool valid(void) const
+    {
+        return mIsValid;
+    }
+};
+
+void timeoutThreadFunctor(size_t timeoutMinutes)
+{
+    std::chrono::high_resolution_clock::time_point timeoutTime = std::chrono::high_resolution_clock::now();
+    timeoutTime += std::chrono::minutes(timeoutMinutes);
+    bool timedOut = false;
+
+    while (!notificationExitNow())
+    {
+        if (std::chrono::high_resolution_clock::now() >= timeoutTime)
+        {
+            timedOut = true;
+            break;
+        }
+
+        usleep(100 * 1000); // 100ms
+    }
+
+    if (timedOut)
+    {
+        defaultExit();
+    }
+}
+
 int main(int argc, char** argv)
 {
-    const char* title(NULL);
-    const char* description(NULL);
-    const char* options[3] = {NULL, NULL, NULL};
-    const char* values[3] = {NULL, NULL, NULL};
-    int optIndex = 0;
-    int valIndex = 0;
-    std::string icon("dialog-information");
-    size_t timeoutMinutes(15);
-
     static struct option longOptions[] = {
         {"option",       required_argument, 0, 'o'},
         {"value",        required_argument, 0, 'v'},
@@ -72,101 +172,27 @@ int main(int argc, char** argv)
         {"icon",         required_argument, 0, 'i'}
     };
 
-    int index(1);
-
-    while (1)
-    {
-        int c = getopt_long(argc, argv, "i:o:t:v:", longOptions, NULL);
-        if (c == -1)
-        {
-            break;
-        }
-
-        switch (c)
-        {
-            case 'o':
-                if (optIndex >= 3)
-                {
-                    std::cerr << "Too many options specified. Only 3 allowed." << std::endl;
-                    break;
-                }
-                options[optIndex++] = optarg;
-                index += 2;
-                break;
-            case 'v':
-                if (valIndex >= 3)
-                {
-                    std::cerr << "Too many values specified. Only 3 allowed." << std::endl;
-                    break;
-                }
-                values[valIndex++] = optarg;
-                index += 2;
-                break;
-            case 't':
-                timeoutMinutes = std::atoll(optarg);
-                index += 2;
-                break;
-            case 'i':
-                icon = optarg;
-                index += 2;
-                break;
-            default:
-                usage();
-                return 1;
-        }
-    }
-
-    if (index + 2 != argc)
+    Configuration cfg(argc, argv, "i:o:t:v:", longOptions);
+    if (!cfg.valid())
     {
         usage();
         return 1;
     }
 
-    title = argv[index];
-    description = argv[index + 1];
-
-    if (optIndex > valIndex)
-    {
-        std::cerr << "The number of options and values should be the same. Using the lesser." << std::endl;
-        optIndex = valIndex;
-    }
-
     gtk_init(&argc, &argv);
+	notify_init(cfg.title);
+	NotifyNotification* notification = notify_notification_new(cfg.title, cfg.description, cfg.icon);
 
-	notify_init("agentNotifier");
-	NotifyNotification* notification = notify_notification_new(title, description, icon.c_str());
-
-    for (int i = 0; i < optIndex; ++i)
+    for (int i = 0; i < cfg.optIndex; ++i)
     {
-        notify_notification_add_action(notification, values[i], options[i], close, NULL, NULL);
+        notify_notification_add_action(notification, cfg.values[i], cfg.options[i], close, NULL, NULL);
     }
 
     notify_notification_add_action(notification, "default", "OK", close, NULL, NULL);
     g_signal_connect(G_OBJECT(notification), "closed", defaultExit, notification);
-
     notify_notification_set_urgency(notification, NOTIFY_URGENCY_CRITICAL);
 
-    std::thread timerThread([timeoutMinutes]() -> void {
-        std::chrono::high_resolution_clock::time_point timeoutTime = std::chrono::high_resolution_clock::now();
-        timeoutTime += std::chrono::minutes(timeoutMinutes);
-        bool timedOut = false;
-
-        while (!notificationExitNow())
-        {
-            if (std::chrono::high_resolution_clock::now() >= timeoutTime)
-            {
-                timedOut = true;
-                break;
-            }
-
-            usleep(100 * 1000); // 100ms
-        }
-
-        if (timedOut)
-        {
-            defaultExit();
-        }
-    });
+    std::thread timerThread(timeoutThreadFunctor, cfg.timeoutMinutes);
 	notify_notification_show(notification, NULL);
 
     gtk_main();
