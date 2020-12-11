@@ -1,5 +1,5 @@
-#!/usr/bin/bash
+#!/bin/env bash
 
-sudo dnf install gmock-devel gtest-devel lcov make openssl-devel kernel-devel gcc-c++ lcov
+sudo dnf install gmock-devel gtest-devel lcov make kernel-devel gcc-c++ lcov libnotify-devel gtk3-devel
 
 sudo pip3 install compiledb
