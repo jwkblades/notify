@@ -1,4 +1,5 @@
 *.*.sw*
 .idea
+compile_commands.json
 /notify
 /build/
