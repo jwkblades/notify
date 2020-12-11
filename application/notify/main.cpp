@@ -44,14 +44,15 @@ void close(NotifyNotification*, char* action, gpointer)
 
 void usage(void)
 {
-    std::cerr << "Usage:" << std::endl
-         << "    " << "notify [options] <TITLE> <DESCRIPTION>" << std::endl
-         << std::endl
-         << "Options:" << std::endl
-         << "    " << "--option|-o     An option, up to 3 are allowed. Options are the display string shown on a notification button." << std::endl
-         << "    " << "--value|-v      An value, up to 3 are allowed. Values are the returned value when a notification option is selected." << std::endl
-         << "    " << "--timeout|-t    Timeout for the notification, in minutes." << std::endl
-         << "    " << "--icon|-i       The desired icon name to be used." << std::endl;
+    std::cerr << R"__(Usage:
+    notify [options] <TITLE> <DESCRIPTION>
+
+Options:
+    --option|-o     An option, up to 3 are allowed. Options are displayed in the notification buttons.
+    --value|-v      A value, up to 3 are allowed. Values are printed when a notification option is selected.
+    --timeout|-t    Notification lifetime, in minutes.
+    --icon|-i       The desired icon name to be displayed in the notification.
+    )__" << std::endl;
 }
 
 class Configuration
@@ -180,8 +181,8 @@ int main(int argc, char** argv)
     }
 
     gtk_init(&argc, &argv);
-	notify_init(cfg.title);
-	NotifyNotification* notification = notify_notification_new(cfg.title, cfg.description, cfg.icon);
+    notify_init(cfg.title);
+    NotifyNotification* notification = notify_notification_new(cfg.title, cfg.description, cfg.icon);
 
     for (int i = 0; i < cfg.optIndex; ++i)
     {
@@ -193,11 +194,11 @@ int main(int argc, char** argv)
     notify_notification_set_urgency(notification, NOTIFY_URGENCY_CRITICAL);
 
     std::thread timerThread(timeoutThreadFunctor, cfg.timeoutMinutes);
-	notify_notification_show(notification, NULL);
+    notify_notification_show(notification, NULL);
 
     gtk_main();
     timerThread.join();
-	notify_uninit();
+    notify_uninit();
 
-	return 0;
+    return 0;
 }
