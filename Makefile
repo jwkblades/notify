@@ -1,15 +1,68 @@
+PREFIX := 
+REQUIREMENTS := libnotify gtk+-3.0
+DIRECTORY ?= ${CURDIR}
+SOURCES_DIR := src
+APPLICATION_DIR := $(SOURCES_DIR)/application
+COMPONENTS := ${SOURCES_DIR}/components
+DEPDIR := build
+INCDIR := i
+SRCDIR := s
+LIBS := $(shell pkg-config --libs ${REQUIREMENTS})
+FLAGS = -Wall -pedantic -Wextra -Werror -std=c++20 -O2 $(shell pkg-config --cflags ${REQUIREMENTS})
+ifeq (${DEBUG},1)
+	FLAGS += -fprofile-arcs -ftest-coverage -ggdb
+	LIBS += -lgcov
+endif
 CC := g++
-FLAGS := -Wall -Wextra -Werror -pedantic -std=c++20 -O2
-LIBS := $(shell pkg-config --cflags --libs libnotify gtk+-3.0)
+MANUAL_INC := 
 
-.PHONY: all clean
+EXES := $(patsubst ${APPLICATION_DIR}/%, %, $(shell find ${APPLICATION_DIR}/ -maxdepth 1 -a -type d))
+INC := ${MANUAL_INC} $(foreach directory, $(shell find ${SOURCES_DIR} -name "${INCDIR}" -a -type d), -I${directory})
+INC := $(patsubst -I${SOURCES_DIR}/%, -I%, ${INC})
+OBJS := $(shell find ${DIRECTORY}/${SOURCES_DIR} -wholename "*/${SRCDIR}/*.cpp" -a -type f -o \( -name main.cpp -a -type f \))
+OBJS := $(OBJS:.cpp=.o)
+OBJS := $(OBJS:.md=.o)
+OBJS := $(patsubst ${DIRECTORY}/%, ${DEPDIR}/%, ${OBJS})
+$(shell mkdir -p ${DEPDIR} >/dev/null)
+DEPFLAGS = -MT $@ -MMD -MF ${DEPDIR}/$*.d
+COMPILE.cc = ${CC} ${DEPFLAGS} ${FLAGS} ${INC} -c
+DEPFILES := $(patsubst %, %.d, $(basename ${OBJS}))
 
-all: notify
+PHONY_TARGETS = $(foreach exe, ${EXES}, $(shell if [ -e ${APPLICATION_DIR}/${exe}/Makefile ]; then echo ${exe}; fi))
+.PHONY: all clean print-% ${PHONY_TARGETS}
+all: ${EXES}
+	bin/compiledb ${EXES}
+	bin/lint
+
+${DEPDIR}/%.o: %.cpp
+${DEPDIR}/%.o: %.cpp ${DEPDIR}/%.d
+	@mkdir -p $(shell dirname $@)
+	@echo "Compiling $<"
+	@${COMPILE.cc} ${OUTPUT_OPTION} $<
 
 clean:
-	@rm -f notify
+	@rm -rf ${DEPDIR} *.gcno *.dat
+	@rm -f $(if ${PREFIX}, $(addprefix ${PREFIX}-, ${EXES}), ${EXES})
 
-notify: application/notify/main.cpp
-	@echo "Building ${@}"
-	@${CC} ${FLAGS} ${^} -o ${@} ${LIBS}
+print-%:
+	@echo $* = ${$*}
 
+${DEPDIR}/%.d: ;
+.PRECIOUS: ${DEPDIR}/%.d
+
+-include ${DEPFILES}
+
+define linkTemplate
+${${1}}: %: build/${2}/%/main.o $(filter-out %/main.o,${OBJS})
+	@echo Building $${@}: $$1
+	@if [ -e $${SOURCES_DIR}/${2}/$${@}/Makefile ]; then \
+		make $${MAKEFLAGS} -f ${2}/$${@}/Makefile ${2}-$${@}; \
+		mv ${2}-$${@} $${@}; \
+	fi
+	@if [ ! -e $${SOURCES_DIR}/${2}/$${@}/Makefile ]; then \
+		echo -e "\nLinking $${@}"; \
+		${CC} ${FLAGS} ${INC} $$(shell bin/dependencyObjects $${@} 2>/dev/null) -o $(if ${PREFIX}, ${PREFIX}-$${@}, $${@}) ${LIBS}; \
+	fi
+endef
+
+$(eval $(call linkTemplate,EXES,${APPLICATION_DIR}))

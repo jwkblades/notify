@@ -1,0 +1,5 @@
+#!/bin/bash
+
+for target in ${@}; do
+    compiledb make "${target}"
+done

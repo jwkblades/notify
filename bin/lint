@@ -1,0 +1,10 @@
+#!/bin/bash
+
+for f in $(jq -r '.[].file' compile_commands.json); do
+    echo "Linting ${f}"
+    clang-check --analyze -extra-arg=-Xanalyzer \
+        -extra-arg=-analyzer-checker=core,cplusplus,deadcode,security,optin,unix,alpha.clone,alpha.core,alpha.cplusplus.DeleteWithNonVirtualDtor,alpha.deadcode,alpha.security,alpha.unix \
+        "${f}"
+done
+
+rm *.plist
