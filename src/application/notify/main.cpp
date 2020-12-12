@@ -58,11 +58,13 @@ Options:
 class Configuration
 {
 public:
+    static const int MAX_OPTIONS = 3;
+
     const char* title;
     const char* description;
     const char* icon;
-    const char* options[3];
-    const char* values[3];
+    const char* options[MAX_OPTIONS];
+    const char* values[MAX_OPTIONS];
     size_t timeoutMinutes;
     bool mIsValid;
     int optIndex;
@@ -74,7 +76,8 @@ public:
         options(),
         values(),
         timeoutMinutes(0),
-        mIsValid(false)
+        mIsValid(false),
+        optIndex(0)
     {
         int valIndex = 0;
         int index(1);
@@ -93,7 +96,7 @@ public:
             switch (c)
             {
                 case 'o':
-                    if (optIndex >= 3)
+                    if (optIndex >= MAX_OPTIONS)
                     {
                         std::cerr << "Too many options specified. Only 3 allowed." << std::endl;
                         break;
@@ -102,7 +105,7 @@ public:
                     index += 2;
                     break;
                 case 'v':
-                    if (valIndex >= 3)
+                    if (valIndex >= MAX_OPTIONS)
                     {
                         std::cerr << "Too many values specified. Only 3 allowed." << std::endl;
                         break;
@@ -184,7 +187,7 @@ int main(int argc, char** argv)
     notify_init(cfg.title);
     NotifyNotification* notification = notify_notification_new(cfg.title, cfg.description, cfg.icon);
 
-    for (int i = 0; i < cfg.optIndex; ++i)
+    for (int i = 0; i < cfg.optIndex && i < cfg.MAX_OPTIONS; ++i)
     {
         notify_notification_add_action(notification, cfg.values[i], cfg.options[i], close, NULL, NULL);
     }
