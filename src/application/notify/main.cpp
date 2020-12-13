@@ -82,9 +82,6 @@ public:
         int valIndex = 0;
         int index(1);
 
-        title = argv[index];
-        description = argv[index + 1];
-
         while (1)
         {
             int c = getopt_long(argc, argv, shortOptions, longOptions, NULL);
@@ -129,6 +126,9 @@ public:
         if (index + 2 == argc)
         {
             mIsValid = true;
+
+            title = argv[index];
+            description = argv[index + 1];
         }
 
         if (optIndex > valIndex)
