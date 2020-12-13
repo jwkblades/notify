@@ -1,9 +1,5 @@
 FROM fedora:latest
 
-RUN mkdir /notify
-
-RUN dnf update -y
-
 # Base tools, things that we absolutely require for building
 RUN dnf install -y \
     clang \
@@ -29,6 +25,8 @@ RUN dnf install -y \
     jq
 
 RUN dnf clean all
+
+RUN mkdir /notify
 
 WORKDIR /notify
 ENTRYPOINT ["make"]
