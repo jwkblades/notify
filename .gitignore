@@ -1,5 +1,6 @@
 *.*.sw*
 .idea
+.clangd
 compile_commands.json
 /notify
 /build/
