@@ -13,7 +13,7 @@ ifeq (${DEBUG},1)
 	FLAGS += -fprofile-arcs -ftest-coverage -ggdb
 	LIBS += -lgcov
 endif
-CC := g++
+CC := clang++
 MANUAL_INC := 
 
 EXES := $(patsubst ${APPLICATION_DIR}/%, %, $(shell find ${APPLICATION_DIR}/ -maxdepth 1 -a -type d))
