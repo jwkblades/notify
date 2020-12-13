@@ -201,6 +201,7 @@ int main(int argc, char** argv)
 
     gtk_main();
     timerThread.join();
+    notify_notification_close(notification, NULL);
     notify_uninit();
 
     return 0;
