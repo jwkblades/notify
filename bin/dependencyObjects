@@ -32,6 +32,10 @@ dependencies()
     DEPS="$(cat "${DEPFILE}" | tr '\\' ' ' | tr '\n' ' ' | cut -d: -f2)"
 
     for dep in ${DEPS}; do
+        if [[ "${dep}" =~ ^\/ ]]; then
+          continue
+        fi
+
         filename="$(basename ${dep})"
 
         if [[ -n "${files["${dep}"]}" ]]; then
