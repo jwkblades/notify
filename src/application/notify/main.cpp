@@ -196,8 +196,8 @@ int main(int argc, char** argv)
     g_signal_connect(G_OBJECT(notification), "closed", defaultExit, notification);
     notify_notification_set_urgency(notification, NOTIFY_URGENCY_CRITICAL);
 
-    std::thread timerThread(timeoutThreadFunctor, cfg.timeoutMinutes);
     notify_notification_show(notification, NULL);
+    std::thread timerThread(timeoutThreadFunctor, cfg.timeoutMinutes);
 
     gtk_main();
     timerThread.join();
