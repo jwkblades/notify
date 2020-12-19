@@ -11,13 +11,13 @@ RUN dnf install -y \
     gtk3-devel \
     libnotify-devel
 
-RUN pip3 install compiledb
-
 # Utilities needed for tools
 RUN dnf install -y \
     bash \
     findutils \
     jq
+
+RUN pip3 install compiledb
 
 RUN dnf clean all
 
