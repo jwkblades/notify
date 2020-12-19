@@ -1,5 +1,16 @@
 #!/bin/env bash
 
-sudo dnf install gmock-devel gtest-devel lcov make kernel-devel gcc-c++ lcov libnotify-devel gtk3-devel
+sudo dnf install \
+  bash \
+  clang \
+  findutils \
+  gmock-devel \
+  gtest-devel \
+  gtk3-devel \
+  jq \
+  lcov \
+  libnotify-devel \
+  make \
+  python3-pip
 
 sudo pip3 install compiledb
