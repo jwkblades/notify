@@ -1,0 +1,31 @@
+FROM ubuntu:latest
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update
+
+# Base tools, things we absolutely require for building
+RUN apt-get install -y \
+    build-essential \
+    clang \
+    pkg-config \
+    python3-pip
+
+# Libraries that we need for compilation
+RUN apt-get install -y \
+    gtk+-3-dev \
+    libnotify-dev
+
+# Utilities needed for tools
+RUN apt-get install -y \
+    clang-tools \
+    jq
+
+RUN pip3 install compiledb
+
+RUN apt-get clean
+
+RUN mkdir /notify
+
+WORKDIR /notify
+ENTRYPOINT ["make"]
