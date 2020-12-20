@@ -17,6 +17,7 @@ handles natively, but instead aims to be a better alternative to `notify-send`
 * [ ] Ability to specify a timeout (in minutes) that the notification expires 
   after
 * [ ] Fully scriptable
+* [ ] Attempt to not be locked in to a single platform
 
 ## What it looks like
 
