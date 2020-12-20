@@ -8,8 +8,8 @@ Configuration::Configuration(int argc, char** argv, const char* shortOptions, st
     options(),
     values(),
     timeoutMinutes(0),
-    mIsValid(false),
-    optIndex(0)
+    optIndex(0),
+    mIsValid(false)
 {
     int valIndex = 0;
     int index(1);
