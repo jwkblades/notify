@@ -1,0 +1,88 @@
+#include "Utilities.hpp"
+
+#include <string>
+#include <chrono>
+#include <iostream>
+#include <unistd.h>
+
+/**
+ * Exit the notification.
+ *
+ * @param set Whether to set the exit value. Once set, the exit value is
+ *     maintained.
+ * @return bool Whether we should exit the application at this point.
+ */
+bool notificationExitNow(bool set = false)
+{
+    static bool applicationValue = false;
+    if (set)
+    {
+        applicationValue = set;
+    }
+    return applicationValue;
+}
+
+/**
+ * A function to pair the teardown requirements for a notification and then the
+ * application as a whole.
+ */
+void teardown(void)
+{
+    notificationExitNow(true);
+    gtk_main_quit();
+}
+
+void defaultExit(void)
+{
+    std::cout << "DEFAULT" << std::endl;
+    teardown();
+}
+
+void close(NotifyNotification*, char* action, gpointer)
+{
+    if (std::string("default") == action)
+    {
+        defaultExit();
+        return;
+    }
+
+    std::cout << action << std::endl;
+    teardown();
+}
+
+void usage(void)
+{
+    std::cerr << R"__(Usage:
+    notify [options] <TITLE> <DESCRIPTION>
+
+Options:
+    --option|-o     An option, up to 3 are allowed. Options are displayed in the notification buttons.
+    --value|-v      A value, up to 3 are allowed. Values are printed when a notification option is selected.
+    --timeout|-t    Notification lifetime, in minutes.
+    --icon|-i       The desired icon name to be displayed in the notification.
+    )__" << std::endl;
+}
+
+
+void timeoutThreadFunctor(size_t timeoutMinutes)
+{
+    std::chrono::high_resolution_clock::time_point timeoutTime = std::chrono::high_resolution_clock::now();
+    timeoutTime += std::chrono::minutes(timeoutMinutes);
+    bool timedOut = false;
+
+    while (!notificationExitNow())
+    {
+        if (std::chrono::high_resolution_clock::now() >= timeoutTime)
+        {
+            timedOut = true;
+            break;
+        }
+
+        usleep(100 * 1000); // 100ms
+    }
+
+    if (timedOut)
+    {
+        defaultExit();
+    }
+}
