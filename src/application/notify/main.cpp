@@ -1,12 +1,9 @@
 #include "Configuration.hpp"
 #include "Utilities.hpp"
 
-#include <iostream>
-#include <string>
-#include <thread>
-
 #include <gtk/gtk.h>
 #include <libnotify/notify.h>
+#include <thread>
 
 int main(int argc, char** argv)
 {
