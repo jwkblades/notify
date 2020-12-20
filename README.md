@@ -18,10 +18,31 @@ handles natively, but instead aims to be a better alternative to `notify-send`
   after
 * [ ] Fully scriptable
 
+## What it looks like
+
+Notifications are presented normally based on what your window manager provides.
+Here are a couple of instances for what they look like when launched with the
+following commands:
+
+`./notify -t 2 -o First -v 1 -o Second -v 2 -o "Third Option" -v 3 "Notify <WM>
+Example" "A simple example of a notification in <WM>"`
+
+### Gnome
+
+![Gnome notification](userdocs/assets/images/Gnome_notification_example.png)
+
+### KDE
+
+![KDE notification](userdocs/assets/images/KDE_notification_example.png)
+
 ## Development Requirements
 
 Below is a list of packages required for their various distributions to build
 and test notify. If your distribution isn't listed, feel free to add it!
+
+If you are interested in reading further information on development 
+practices and how to contribute, see the 
+[Development Userdocs](./userdocs/development/README.md).
 
 ### Fedora
 
