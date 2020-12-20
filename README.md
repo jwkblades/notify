@@ -20,9 +20,12 @@ handles natively, but instead aims to be a better alternative to `notify-send`
 
 ## Development Requirements
 
+Below is a list of packages required for their various distributions to build
+and test notify. If your distribution isn't listed, feel free to add it!
+
 ### Fedora
 
-RPM
+dnf/yum
 
 ```
 bash
@@ -46,6 +49,32 @@ compiledb
 
 For quick setup, run `bin/configure` (requires sudo access, currently only for
 Fedora systems).
+
+### Ubuntu
+
+apt-get
+
+```
+bash
+build-essential
+clang
+clang-tools
+findutils
+gtk+-3-dev
+jq
+lcov
+libgmock-dev
+libgtest-dev
+libnotify-dev
+pkg-config
+python3-pip
+```
+
+pip3
+
+```
+compiledb
+```
 
 ### Other distros
 
