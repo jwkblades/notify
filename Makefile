@@ -1,9 +1,9 @@
 PREFIX := 
+# ./src/components/configuration/i/Configuration.hpp
 REQUIREMENTS := libnotify gtk+-3.0
 DIRECTORY ?= ${CURDIR}
 SOURCES_DIR := src
 APPLICATION_DIR := $(SOURCES_DIR)/application
-COMPONENTS := ${SOURCES_DIR}/components
 DEPDIR := build
 INCDIR := i
 SRCDIR := s
@@ -18,7 +18,6 @@ MANUAL_INC :=
 
 EXES := $(patsubst ${APPLICATION_DIR}/%, %, $(shell find ${APPLICATION_DIR}/ -maxdepth 1 -a -type d))
 INC := ${MANUAL_INC} $(foreach directory, $(shell find ${SOURCES_DIR} -name "${INCDIR}" -a -type d), -I${directory})
-INC := $(patsubst -I${SOURCES_DIR}/%, -I%, ${INC})
 OBJS := $(shell find ${DIRECTORY}/${SOURCES_DIR} -wholename "*/${SRCDIR}/*.cpp" -a -type f -o \( -name main.cpp -a -type f \))
 OBJS := $(OBJS:.cpp=.o)
 OBJS := $(OBJS:.md=.o)
