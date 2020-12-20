@@ -1,9 +1,10 @@
+#include "Configuration.hpp"
+
 #include <iostream>
 #include <string>
 #include <chrono>
 #include <thread>
 
-#include <getopt.h>
 #include <unistd.h>
 #include <gtk/gtk.h>
 #include <libnotify/notify.h>
@@ -55,94 +56,6 @@ Options:
     )__" << std::endl;
 }
 
-class Configuration
-{
-public:
-    static const int MAX_OPTIONS = 3;
-
-    const char* title;
-    const char* description;
-    const char* icon;
-    const char* options[MAX_OPTIONS];
-    const char* values[MAX_OPTIONS];
-    size_t timeoutMinutes;
-    bool mIsValid;
-    int optIndex;
-
-    Configuration(int argc, char** argv, const char* shortOptions, struct option* longOptions):
-        title(NULL),
-        description(NULL),
-        icon("dialog-information"),
-        options(),
-        values(),
-        timeoutMinutes(0),
-        mIsValid(false),
-        optIndex(0)
-    {
-        int valIndex = 0;
-        int index(1);
-
-        while (1)
-        {
-            int c = getopt_long(argc, argv, shortOptions, longOptions, NULL);
-            if (c == -1)
-            {
-                break;
-            }
-
-            switch (c)
-            {
-                case 'o':
-                    if (optIndex >= MAX_OPTIONS)
-                    {
-                        std::cerr << "Too many options specified. Only 3 allowed." << std::endl;
-                        break;
-                    }
-                    options[optIndex++] = optarg;
-                    index += 2;
-                    break;
-                case 'v':
-                    if (valIndex >= MAX_OPTIONS)
-                    {
-                        std::cerr << "Too many values specified. Only 3 allowed." << std::endl;
-                        break;
-                    }
-                    values[valIndex++] = optarg;
-                    index += 2;
-                    break;
-                case 't':
-                    timeoutMinutes = std::stoull(optarg);
-                    index += 2;
-                    break;
-                case 'i':
-                    icon = optarg;
-                    index += 2;
-                    break;
-                default:
-                    return;
-            }
-        }
-
-        if (index + 2 == argc)
-        {
-            mIsValid = true;
-
-            title = argv[index];
-            description = argv[index + 1];
-        }
-
-        if (optIndex > valIndex)
-        {
-            std::cerr << "The number of options and values should be the same. Using the lesser." << std::endl;
-            optIndex = valIndex;
-        }
-    }
-
-    [[nodiscard]] inline bool valid(void) const
-    {
-        return mIsValid;
-    }
-};
 
 void timeoutThreadFunctor(size_t timeoutMinutes)
 {
