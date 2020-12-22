@@ -5,4 +5,4 @@ CMD="${@}"
 
 ./bin/oci-build-container "${FLAVOR}" &>/dev/null
 
-./bin/oci-run run -it --mount type=bind,source=.,destination=/notify --privileged --rm --env-host=true localhost/${FLAVOR}_notify_build:latest "${@}"
+DEPDIR="build/${FLAVOR}" ./bin/oci-run run -it --mount type=bind,source=.,destination=/notify --privileged --rm --env-host=true localhost/${FLAVOR}_notify_build:latest "${@}"

@@ -2,6 +2,7 @@
 set -e
 
 EXE="${1:-}"
+DEPDIR="${2}/src"
 declare -A files
 
 log()
@@ -46,8 +47,8 @@ dependencies()
         if [[ "${filename}" =~ \.(h|hpp)$ ]]; then
             objfile="$(echo -n ${filename} | sed -E "s/(.*)?\.(h|hpp)$/\1.o/")"
             subdepfile="$(echo -n ${filename} | sed -E "s/(.*)?\.(h|hpp)$/\1.d/")"
-            objpath="$(find "$(pwd)" -path "*/s/${objfile}" -a -type f)"
-            subdeppath="$(find "$(pwd)" -path "*/s/${subdepfile}" -a -type f)"
+            objpath="$(find "${DEPDIR}" -path "*/s/${objfile}" -a -type f)"
+            subdeppath="$(find "${DEPDIR}" -path "*/s/${subdepfile}" -a -type f)"
 
             if [[ -n "${objpath}" ]]; then
                 if [[ -n "${subdeppath}" ]]; then
@@ -62,7 +63,7 @@ dependencies()
             fi
         elif [[ "${filename}" =~ \.(c|cpp)$ ]]; then
             objfile="$(echo -n ${filename} | sed -E "s/(.*)?\.(c|cpp)$/\1.o/")"
-            objpath="$(find "$(pwd)" -path "*/s/${objfile}" -a -type f)"
+            objpath="$(find "${DEPDIR}" -path "*/s/${objfile}" -a -type f)"
 
             if [[ -n "${objpath}" ]]; then
                 if [[ -n "${files["${objpath:-NONE}"]}" ]]; then
@@ -77,5 +78,5 @@ dependencies()
     return 0
 }
 
-echo "build/src/application/${EXE}/main.o"
-dependencies "build/src/application/${EXE}/main.d" | sed -e "s#$(pwd)/##g"
+echo ${3}
+dependencies $(echo -n ${3} | sed -e "s#o\$#d#") | sed -e "s#$(pwd)/##g"

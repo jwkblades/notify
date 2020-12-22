@@ -1,9 +1,9 @@
-PREFIX := 
+PREFIX := ${FLAVOR}
 REQUIREMENTS := libnotify gtk+-3.0
 DIRECTORY ?= ${CURDIR}
 SOURCES_DIR := src
 APPLICATION_DIR := $(SOURCES_DIR)/application
-DEPDIR := build
+DEPDIR ?= build
 INCDIR := i
 SRCDIR := s
 LIBS := $(shell pkg-config --libs ${REQUIREMENTS})
@@ -27,7 +27,7 @@ COMPILE.cc = ${CC} ${DEPFLAGS} ${FLAGS} ${INC} -c
 DEPFILES := $(patsubst %, %.d, $(basename ${OBJS}))
 
 PHONY_TARGETS = $(foreach exe, ${EXES}, $(shell if [ -e ${APPLICATION_DIR}/${exe}/Makefile ]; then echo ${exe}; fi))
-.PHONY: all clean print-% ${PHONY_TARGETS}
+.PHONY: all clean clean-flavor print-% ${PHONY_TARGETS}
 all: ${EXES}
 	bin/compiledb ${EXES}
 	bin/lint
@@ -39,7 +39,12 @@ ${DEPDIR}/%.o: %.cpp ${DEPDIR}/%.d
 	@${COMPILE.cc} ${OUTPUT_OPTION} $<
 
 clean:
+	@FLAVOR=fedora make clean-flavor
+	@FLAVOR=ubuntu make clean-flavor
 	@rm -rf ${DEPDIR} *.gcno *.dat
+	@rm -f $(if ${PREFIX}, $(addprefix ${PREFIX}-, ${EXES}), ${EXES})
+
+clean-flavor:
 	@rm -f $(if ${PREFIX}, $(addprefix ${PREFIX}-, ${EXES}), ${EXES})
 
 print-%:
@@ -51,15 +56,15 @@ ${DEPDIR}/%.d: ;
 -include ${DEPFILES}
 
 define linkTemplate
-${${1}}: %: build/${2}/%/main.o $(filter-out %/main.o,${OBJS})
+${${1}}: %: ${DEPDIR}/${2}/%/main.o $(filter-out %/main.o,${OBJS})
 	@echo Building $${@}
 	@if [ -e $${DIRECTORY}/${2}/$${@}/Makefile ]; then \
 		make $${MAKEFLAGS} -f ${2}/$${@}/Makefile $(shell basename ${2})-$${@}; \
-		mv $(shell basename ${2})-$${@} $${@}; \
+		mv $(if ${PREFIX}, ${PREFIX}-, )$(shell basename ${2})-$${@} $(if ${PREFIX}, ${PREFIX}-, )$${@}; \
 	fi
 	@if [ ! -e $${DIRECTORY}/${2}/$${@}/Makefile ]; then \
 		echo -e "\nLinking $${@}"; \
-		${CC} ${FLAGS} ${INC} $$(shell bin/dependencyObjects $${@} 2>/dev/null) -o $(if ${PREFIX}, ${PREFIX}-$${@}, $${@}) ${LIBS}; \
+		${CC} ${FLAGS} ${INC} $$(shell bin/dependencyObjects $${@} $${DEPDIR} $${<} 2>/dev/null) -o $(if ${PREFIX}, ${PREFIX}-$${@}, $${@}) ${LIBS}; \
 	fi
 endef
 
