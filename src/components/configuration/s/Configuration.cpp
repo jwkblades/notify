@@ -96,6 +96,6 @@ Configuration::Configuration(int argc, char** argv, const char* shortOptions, st
     if (optIndex != valIndex)
     {
         std::cerr << "The number of options and values should be the same. Using the lesser." << std::endl;
-        optIndex = valIndex = std::min(optIndex, valIndex);
+        optIndex = std::min(optIndex, valIndex);
     }
 }
