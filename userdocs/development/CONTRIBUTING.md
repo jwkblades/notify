@@ -35,6 +35,22 @@ project directory. In short, what it says is:
   * `s` is a source directory, meant to house C++ files and implementation
     logic.
   * `t` is a test directory, where all of your unit tests go.
+* Please add doxygen-style comments to each function added, even if they are
+  relatively basic. In cases where there is a non-intuitive decision that was
+  made, ensure that you comment the _why_ behind the decision as much, if not
+  more, than the what.
+
+## Code coverage
+
+It is expected that all code added will be unit tested thoroughly, this can be
+done simplest with test driven development (hereafter TDD), but there are
+a number of other testing methodologies that will meet this requirement.
+
+PRs may be rejected if coverage is reduced as a result of the code changes.
+
+Please add negative testing in addition to positive testing, paying close
+attention to corner cases and any potential race conditions that could be
+encountered.
 
 ## Commits and Commit Messages
 

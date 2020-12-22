@@ -44,3 +44,11 @@ Once your flavor test executable has been compiled, you can run it within the
 container via:
 
 `FLAVOR=<FLAVOR> ./bin/oci-run-in-container ./<FLAVOR>-test`
+
+## Code coverage
+
+When determining code coverage, you should be able to do so by simply running
+`./bin/coverage ./test`. It is currently best to do so on a native build, as it
+will attempt to open the coverage report in your default browser (using
+`xdg-open`), and will likely have difficulty doing so from within a build
+container.
