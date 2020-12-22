@@ -2,5 +2,6 @@
 .idea
 .clangd
 compile_commands.json
-/notify
+notify
+test
 /build/
