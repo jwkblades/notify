@@ -30,4 +30,3 @@ RUN apt-get clean
 RUN mkdir /notify
 
 WORKDIR /notify
-ENTRYPOINT ["make"]

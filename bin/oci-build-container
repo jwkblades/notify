@@ -1,0 +1,18 @@
+#!/bin/bash
+
+flavors()
+{
+    find ./containers/build/Containerfile.* | sed -e 's/^.*Containerfile.//g' | tr '\n' ' '
+}
+
+buildFlavor()
+{
+    local flavor="${1}"
+    ./bin/oci-run build -f containers/build/Containerfile.${flavor} --tag=${flavor}_notify_build:latest --tag=${flavor}_notify_build:$(date +"%Y%m%d%H%M%S")
+}
+
+FLAVORS="${@:-$(flavors)}"
+for flavor in ${FLAVORS}; do
+    echo "Building flavor: ${flavor}"
+    buildFlavor ${flavor}
+done
