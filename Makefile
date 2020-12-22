@@ -9,7 +9,7 @@ SRCDIR := s
 LIBS := $(shell pkg-config --libs ${REQUIREMENTS})
 FLAGS = -Wall -pedantic -Wextra -Werror -std=c++20 -O2 $(shell pkg-config --cflags ${REQUIREMENTS})
 ifeq (${DEBUG},1)
-	FLAGS += -fprofile-arcs -ftest-coverage -ggdb
+	FLAGS += -fprofile-instr-generate -fcoverage-mapping -fprofile-arcs -ftest-coverage -ggdb
 	LIBS += -lgcov
 endif
 CC := clang++

@@ -59,6 +59,7 @@ gtk3-devel
 jq
 lcov
 libnotify-devel
+llvm
 make
 python3-pip
 ```
@@ -88,6 +89,7 @@ lcov
 libgmock-dev
 libgtest-dev
 libnotify-dev
+llvm
 pkg-config
 python3-pip
 ```

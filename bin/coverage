@@ -1,11 +1,15 @@
 #!/bin/bash
 
-lcov --no-external -c -i -d . -o pre.dat
+COVERAGE_PATH="build/coverage"
 
-${@}
+mkdir -p ${COVERAGE_PATH}
 
-lcov --no-external -c -d . -o post.dat
-lcov -a pre.dat -a post.dat -o coverage.dat
-genhtml -o coverage/ -t "Hive coverage" --num-spaces 4 coverage.dat
+LLVM_PROFILE_FILE="${COVERAGE_PATH}/profile.dat" ${@}
 
-xdg-open coverage/index.html
+sync -f ${COVERAGE_PATH}
+llvm-profdata merge -sparse ${COVERAGE_PATH}/profile.dat -o ${COVERAGE_PATH}/coverage.dat
+llvm-cov export -ignore-filename-regex=^/usr -format=lcov ${1} -instr-profile=${COVERAGE_PATH}/coverage.dat > ${COVERAGE_PATH}/coverage.lcov
+
+genhtml -o ${COVERAGE_PATH}/ -t "Notify coverage" --num-spaces 4 ${COVERAGE_PATH}/coverage.lcov
+
+xdg-open ${COVERAGE_PATH}/index.html
