@@ -17,7 +17,7 @@ executables do for you:
   `FLAVOR` environment variable is set, then `fedora` is used.
 * `oci-exec` runs a command in the container runtime on your machine;
   currently `docker` and `podman` are supported.
-* `oci-run-in-container` runs a command in a build container, once again
+* `oci-run` runs a command in a build container, once again
   based on `FLAVOR` and defaulting to `fedora`.
 * `oci-runtime` prints the determined container runtime for the system,
   currently supports `docker` and `podman`.
@@ -43,7 +43,7 @@ First you will need to build the `test` target. That can be done like so:
 Once your flavor test executable has been compiled, you can run it within the
 container via:
 
-`FLAVOR=<FLAVOR> ./bin/oci-run-in-container ./<FLAVOR>-test`
+`FLAVOR=<FLAVOR> ./bin/oci-run ./<FLAVOR>-test`
 
 ## Code coverage
 

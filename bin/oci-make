@@ -2,4 +2,4 @@
 
 : ${FLAVOR="fedora"}
 
-./bin/oci-run-in-container make ${@}
+./bin/oci-run make ${@}
