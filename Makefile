@@ -1,5 +1,4 @@
 PREFIX := 
-# ./src/components/configuration/i/Configuration.hpp
 REQUIREMENTS := libnotify gtk+-3.0
 DIRECTORY ?= ${CURDIR}
 SOURCES_DIR := src
@@ -36,7 +35,7 @@ all: ${EXES}
 ${DEPDIR}/%.o: %.cpp
 ${DEPDIR}/%.o: %.cpp ${DEPDIR}/%.d
 	@mkdir -p $(shell dirname $@)
-	@echo "Compiling $<"
+	@echo "Compiling ${@}"
 	@${COMPILE.cc} ${OUTPUT_OPTION} $<
 
 clean:
@@ -53,12 +52,12 @@ ${DEPDIR}/%.d: ;
 
 define linkTemplate
 ${${1}}: %: build/${2}/%/main.o $(filter-out %/main.o,${OBJS})
-	@echo Building $${@}: $$1
-	@if [ -e $${SOURCES_DIR}/${2}/$${@}/Makefile ]; then \
-		make $${MAKEFLAGS} -f ${2}/$${@}/Makefile ${2}-$${@}; \
-		mv ${2}-$${@} $${@}; \
+	@echo Building $${@}
+	@if [ -e $${DIRECTORY}/${2}/$${@}/Makefile ]; then \
+		make $${MAKEFLAGS} -f ${2}/$${@}/Makefile $(shell basename ${2})-$${@}; \
+		mv $(shell basename ${2})-$${@} $${@}; \
 	fi
-	@if [ ! -e $${SOURCES_DIR}/${2}/$${@}/Makefile ]; then \
+	@if [ ! -e $${DIRECTORY}/${2}/$${@}/Makefile ]; then \
 		echo -e "\nLinking $${@}"; \
 		${CC} ${FLAGS} ${INC} $$(shell bin/dependencyObjects $${@} 2>/dev/null) -o $(if ${PREFIX}, ${PREFIX}-$${@}, $${@}) ${LIBS}; \
 	fi
