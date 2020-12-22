@@ -20,10 +20,23 @@
 #include <cstdlib>
 #include <getopt.h>
 
+#define CONFIGURATION_MAX_OPTIONS 3
+
+/**
+ * A Configuration, as represented by an application's command line arguments.
+ *
+ * Configuration is meant to take in all command line arguments passed into the
+ * executable at runtime, as a result, it is expected that `argv[0]` is unused
+ * by the configuration as that will be the application target (the executable
+ * being run), and not a valid option.
+ *
+ * Additionally, Configuration uses `getopt` and `getopt_long` to do option
+ * parsing, meaning that it is NOT thread-safe.
+ */
 struct Configuration
 {
 public:
-    static const int MAX_OPTIONS = 3;
+    static const int MAX_OPTIONS = CONFIGURATION_MAX_OPTIONS;
 
     const char* title;
     const char* description;
