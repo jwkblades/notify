@@ -14,6 +14,8 @@ RUN apt-get install -y \
 # Libraries that we need for compilation
 RUN apt-get install -y \
     gtk+-3-dev \
+    libgmock-dev \
+    libgtest-dev \
     libnotify-dev
 
 # Utilities needed for tools

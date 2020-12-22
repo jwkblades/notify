@@ -8,6 +8,8 @@ RUN dnf install -y \
 
 # Libraries that we need for compilation
 RUN dnf install -y \
+    gmock-devel \
+    gtest-devel \
     gtk3-devel \
     libnotify-devel
 
