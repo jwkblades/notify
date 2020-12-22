@@ -4,4 +4,6 @@
 compile_commands.json
 notify
 test
+/*-notify
+/*-test
 /build/
