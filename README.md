@@ -36,6 +36,20 @@ Example" "A simple example of a notification in <WM>"`
 
 ![KDE notification](userdocs/assets/images/KDE_notification_example.png)
 
+## Usage
+
+```
+notify [options] <TITLE> <DESCRIPTION>
+
+Options:
+    --option|-o     An option, up to 3 are allowed. Options are displayed in
+                    the notification buttons.
+    --value|-v      A value, up to 3 are allowed. Values are printed when a
+                    notification option is selected.
+    --timeout|-t    Notification lifetime, in minutes.
+    --icon|-i       The desired icon name to be displayed in the notification.
+```
+
 ## Development Requirements
 
 Below is a list of packages required for their various distributions to build
