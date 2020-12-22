@@ -28,13 +28,23 @@ Configuration::Configuration(int argc, char** argv, const char* shortOptions, st
     mIsValid(false)
 {
     int valIndex = 0;
-    int index(1);
+    int index = 1;
 
-    while (1)
+    // Reset getopt globals to make this safe for multi-use (such as in unit
+    // test environments).
+    optind = 0;
+    opterr = 0;
+    optopt = 0;
+
+    while (true)
     {
         int c = getopt_long(argc, argv, shortOptions, longOptions, NULL);
         if (c == -1)
         {
+            if (index + 2 != argc)
+            {
+                std::cerr << "No option recognized. Breaking at index " << index << ", of " << argc << std::endl;
+            }
             break;
         }
 
@@ -43,19 +53,23 @@ Configuration::Configuration(int argc, char** argv, const char* shortOptions, st
             case 'o':
                 if (optIndex >= MAX_OPTIONS)
                 {
-                    std::cerr << "Too many options specified. Only 3 allowed." << std::endl;
-                    break;
+                    std::cerr << "Too many options specified. Only " << MAX_OPTIONS << " allowed." << std::endl;
                 }
-                options[optIndex++] = optarg;
+                else
+                {
+                    options[optIndex++] = optarg;
+                }
                 index += 2;
                 break;
             case 'v':
                 if (valIndex >= MAX_OPTIONS)
                 {
-                    std::cerr << "Too many values specified. Only 3 allowed." << std::endl;
-                    break;
+                    std::cerr << "Too many values specified. Only " << MAX_OPTIONS << " allowed." << std::endl;
                 }
-                values[valIndex++] = optarg;
+                else
+                {
+                    values[valIndex++] = optarg;
+                }
                 index += 2;
                 break;
             case 't':
@@ -79,9 +93,9 @@ Configuration::Configuration(int argc, char** argv, const char* shortOptions, st
         description = argv[index + 1];
     }
 
-    if (optIndex > valIndex)
+    if (optIndex != valIndex)
     {
         std::cerr << "The number of options and values should be the same. Using the lesser." << std::endl;
-        optIndex = valIndex;
+        optIndex = valIndex = std::min(optIndex, valIndex);
     }
 }
