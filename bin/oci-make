@@ -1,5 +1,3 @@
 #!/bin/bash
 
-: ${FLAVOR="fedora"}
-
 ./bin/oci-run make ${@}
