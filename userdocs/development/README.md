@@ -15,7 +15,7 @@ executables do for you:
   flavor, the available container files are in `containers/build/`.
 * `oci-make` runs make within a container of the desired flavor. If no
   `FLAVOR` environment variable is set, then `fedora` is used.
-* `oci-run` runs a command in the container runtime on your machine;
+* `oci-exec` runs a command in the container runtime on your machine;
   currently `docker` and `podman` are supported.
 * `oci-run-in-container` runs a command in a build container, once again
   based on `FLAVOR` and defaulting to `fedora`.

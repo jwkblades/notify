@@ -8,7 +8,7 @@ flavors()
 buildFlavor()
 {
     local flavor="${1}"
-    ./bin/oci-run build -f containers/build/Containerfile.${flavor} --tag=${flavor}_notify_build:latest --tag=${flavor}_notify_build:$(date +"%Y%m%d%H%M%S")
+    ./bin/oci-exec build -f containers/build/Containerfile.${flavor} --tag=${flavor}_notify_build:latest --tag=${flavor}_notify_build:$(date +"%Y%m%d%H%M%S")
 }
 
 FLAVORS="${@:-$(flavors)}"
