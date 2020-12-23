@@ -1,0 +1,9 @@
+FROM localhost/fedora_notify_build:latest
+
+RUN dnf install -y \
+    fedora-packager \
+    fedora-review
+
+RUN usermode -a -G mock root
+
+
