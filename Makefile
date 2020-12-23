@@ -57,9 +57,9 @@ ${DEPDIR}/%.d: ;
 
 define linkTemplate
 ${${1}}: %: ${DEPDIR}/${2}/%/main.o $(filter-out %/main.o,${OBJS})
-	@echo Building $${@}
+	@echo "Building $${@}"
 	@if [ -e $${DIRECTORY}/${2}/$${@}/Makefile ]; then \
-		make $${MAKEFLAGS} -f ${2}/$${@}/Makefile $(shell basename ${2})-$${@}; \
+		make -f ${2}/$${@}/Makefile $(shell basename ${2})-$${@}; \
 		mv $(if ${PREFIX}, ${PREFIX}-, )$(shell basename ${2})-$${@} $(if ${PREFIX}, ${PREFIX}-, )$${@}; \
 	fi
 	@if [ ! -e $${DIRECTORY}/${2}/$${@}/Makefile ]; then \
