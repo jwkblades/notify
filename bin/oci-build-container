@@ -1,4 +1,5 @@
 #!/bin/bash
+source ./bin/utils.sh
 
 findFlavor()
 {
@@ -21,12 +22,19 @@ buildFlavor()
     local container="${1}"
     local flavor="$(fileFlavor "${container}")"
     local type="$(containerType "${container}")"
-    ./bin/oci-exec build -f "${container}" --tag=${flavor}_notify_${type}:latest --tag=${flavor}_notify_${type}:$(date +"%Y%m%d%H%M%S")
+    local version="$(./bin/version)"
+    warning "Searching for container image ${flavor}_notify_${type}:${version}"
+    if ./bin/oci-exec image exists "${flavor}_notify_${type}:${version}"; then
+        log "Container ${flavor}_notify_${type}:${version} exists, skipping."
+        return 0
+    fi
+
+    ./bin/oci-exec build -f "${container}" --tag=${flavor}_notify_${type}:latest --tag=${flavor}_notify_${type}:${version}
 }
 
 : ${FLAVOR="fedora"}
 
 for container in $(findFlavor "${FLAVOR}"); do
-    echo "Building container: ${container}"
+    log "Building container: ${container}"
     buildFlavor ${container}
 done
