@@ -5,7 +5,7 @@
 
 log()
 {
-    echo "${@}" >&2
+    echo "${@}$(tput sgr0)" >&2
 }
 
 warning()
