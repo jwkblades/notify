@@ -3,7 +3,7 @@ source ./bin/utils.sh
 
 findFlavor()
 {
-    find ./containers -name "Containerfile.${1}"
+    find ./containers/${CONTAINER} -name "Containerfile.${1}"
 }
 
 fileFlavor()
@@ -34,7 +34,8 @@ buildFlavor()
     ./bin/oci-exec build -f "${container}" --tag=${imageName}:latest --tag=${imageName}:${version}
 }
 
-: ${FLAVOR="fedora"}
+: ${FLAVOR="*"}
+: ${CONTAINER="*"}
 
 for container in $(findFlavor "${FLAVOR}"); do
     ticker "buildFlavor ${container}" "Building ${container}"
