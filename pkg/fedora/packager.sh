@@ -1,7 +1,13 @@
 #!/bin/bash
 
+set -e
+export HOME="/root"
+
 rpmdev-setuptree
-curl http://192.168.0.116/notify-0.0.1.tgz --output /root/rpmbuild/SOURCES/notify-0.0.1.tgz
+if [[ ! -d /notify-0.0.1 ]]; then
+    cp -r /notify/ /notify-0.0.1
+fi
+tar -czvf /root/rpmbuild/SOURCES/notify-0.0.1.tgz /notify-0.0.1
 
 cp pkg/fedora/notify.spec /root/rpmbuild/SPECS/
 rpmbuild -ba /root/rpmbuild/SPECS/notify.spec

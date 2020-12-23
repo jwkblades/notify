@@ -5,7 +5,7 @@ Summary: Scriptable desktop notifications for Linux
 
 License: ASL 2.0
 URL: https://github.com/jwkblades/notify
-Source0: http://192.168.0.116/%{name}-%{version}.tgz
+Source0: https://github.com/jwkblades/notify/archive/%{name}-%{version}.tgz
 
 BuildRoot: %{_topdir}/BUILDROOT/
 BuildRequires: bash
