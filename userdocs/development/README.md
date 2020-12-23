@@ -23,6 +23,8 @@ executables do for you:
   `containers/*`, for instance `build` or `package`.
 * `oci-runtime` prints the determined container runtime for the system,
   currently supports `docker` and `podman`.
+* `oci-pkg` packages notify up for a distribution based on `FLAVOR`, which
+  defaults to `fedora`.
 
 ## Building a flavor
 
@@ -53,15 +55,13 @@ Packaging has also been taken care of in a containerized fashion, though for the
 time being the containers available for packing are relatively limited (Fedora
 only).
 
-To go about packaging, you can run `oci-run` again, this time with the
-environment variable `CONTAINER=package` (to specify the container type,
-normally that defaults to `build`), and then the packager script that you are
-interested in. For instance:
+To start a package build, run `oci-pkg` with optionally specifying the flavor of
+package (per container flavor) to be built, like so:
 
-`CONTAINER=package ./bin/oci-run ./pkg/fedora/packager.sh`
+`./bin/oci-pkg`  
+`FLAVOR=fedora ./bin/oci-pkg`
 
-Once everything has completed with the packaging, the resulting packages should
-be available in the build directory.
+The default `FLAVOR` is fedora.
 
 ## Code coverage
 

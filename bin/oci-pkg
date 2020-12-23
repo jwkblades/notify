@@ -1,0 +1,5 @@
+#!/bin/bash
+source ./bin/utils.sh
+
+: ${FLAVOR="fedora"}
+CONTAINER=package ticker "./bin/oci-run ./pkg/${FLAVOR}/packager.sh" "Packaging notify for ${FLAVOR}"
