@@ -18,7 +18,9 @@ executables do for you:
 * `oci-exec` runs a command in the container runtime on your machine;
   currently `docker` and `podman` are supported.
 * `oci-run` runs a command in a build container, once again
-  based on `FLAVOR` and defaulting to `fedora`.
+  based on `FLAVOR` and defaulting to `fedora`. You may also specify
+  a `CONTAINER`, which is planned to be associated with the directory in
+  `containers/*`, for instance `build` or `package`.
 * `oci-runtime` prints the determined container runtime for the system,
   currently supports `docker` and `podman`.
 
@@ -44,6 +46,22 @@ Once your flavor test executable has been compiled, you can run it within the
 container via:
 
 `FLAVOR=<FLAVOR> ./bin/oci-run ./<FLAVOR>-test`
+
+## Packaging
+
+Packaging has also been taken care of in a containerized fashion, though for the
+time being the containers available for packing are relatively limited (Fedora
+only).
+
+To go about packaging, you can run `oci-run` again, this time with the
+environment variable `CONTAINER=package` (to specify the container type,
+normally that defaults to `build`), and then the packager script that you are
+interested in. For instance:
+
+`CONTAINER=package ./bin/oci-run ./pkg/fedora/packager.sh`
+
+Once everything has completed with the packaging, the resulting packages should
+be available in the build directory.
 
 ## Code coverage
 
