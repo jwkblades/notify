@@ -12,19 +12,25 @@ commands for setting up the build container, as well as running commands within
 the container. Here is a little more information about what each of the `oci-`
 executables do for you:
 * `oci-build-container` allows you to build a container according to
-  flavor, the available container files are in `containers/build/`.
-* `oci-make` runs make within a container of the desired flavor. If no
-  `FLAVOR` environment variable is set, then `fedora` is used.
+  flavor, the available container files are in `containers/*/`. By default, this
+  will build all available container files; however, it can by narrowed down by
+  specifying `FLAVOR` and/ or `CONTAINER`
+* `oci-make` runs make within a container of the desired flavor.
 * `oci-exec` runs a command in the container runtime on your machine;
   currently `docker` and `podman` are supported.
 * `oci-run` runs a command in a build container, once again
   based on `FLAVOR` and defaulting to `fedora`. You may also specify
-  a `CONTAINER`, which is planned to be associated with the directory in
-  `containers/*`, for instance `build` or `package`.
+  a `CONTAINER`.
 * `oci-runtime` prints the determined container runtime for the system,
   currently supports `docker` and `podman`.
 * `oci-pkg` packages notify up for a distribution based on `FLAVOR`, which
   defaults to `fedora`.
+
+## Environment Variables
+
+* `FLAVOR` what distro you are building for, such as `fedora`, or `ubuntu`.
+* `CONTAINER` the container purpose that should be built, such as `build`, or
+  `package`.
 
 ## Building a flavor
 
