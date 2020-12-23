@@ -1,8 +1,12 @@
 #!/bin/bash
+source ./bin/utils.sh
 
 : ${FLAVOR="fedora"}
 : ${CONTAINER="build"}
 
-./bin/oci-build-container "${FLAVOR}" &>/dev/null
+CONTAINER=${CONTAINER} FLAVOR=${FLAVOR} ./bin/oci-build-container "${FLAVOR}"
 
-FLAVOR="${FLAVOR}" DEPDIR="build/${FLAVOR}" ./bin/oci-exec run -it --mount type=bind,source=.,destination=/notify --privileged --rm --env-host=true localhost/${FLAVOR}_notify_${CONTAINER}:latest "${@}"
+image="localhost/${FLAVOR}_notify_${CONTAINER}:$(./bin/version)"
+./bin/oci-exec image exists "${image}" || die "Unable to find required container image: ${image}"
+
+FLAVOR="${FLAVOR}" DEPDIR="build/${FLAVOR}" ./bin/oci-exec run -it --mount type=bind,source=.,destination=/notify --privileged --rm --env-host=true ${image} "${@}"
