@@ -37,6 +37,5 @@ buildFlavor()
 : ${FLAVOR="fedora"}
 
 for container in $(findFlavor "${FLAVOR}"); do
-    log "Building container: ${container}"
-    buildFlavor ${container}
+    ticker "buildFlavor ${container}" "Building ${container}"
 done
