@@ -1,18 +1,32 @@
 #!/bin/bash
 
-flavors()
+findFlavor()
 {
-    find ./containers/build/Containerfile.* | sed -e 's/^.*Containerfile.//g' | tr '\n' ' '
+    find ./containers -name "Containerfile.${1}"
+}
+
+fileFlavor()
+{
+    local file="${1}"
+    echo -n "${file}" | cut -d. -f3
+}
+
+containerType()
+{
+    echo -n "$(basename $(dirname "${1}"))"
 }
 
 buildFlavor()
 {
-    local flavor="${1}"
-    ./bin/oci-exec build -f containers/build/Containerfile.${flavor} --tag=${flavor}_notify_build:latest --tag=${flavor}_notify_build:$(date +"%Y%m%d%H%M%S")
+    local container="${1}"
+    local flavor="$(fileFlavor "${container}")"
+    local type="$(containerType "${container}")"
+    ./bin/oci-exec build -f "${container}" --tag=${flavor}_notify_${type}:latest --tag=${flavor}_notify_${type}:$(date +"%Y%m%d%H%M%S")
 }
 
-FLAVORS="${@:-$(flavors)}"
-for flavor in ${FLAVORS}; do
-    echo "Building flavor: ${flavor}"
-    buildFlavor ${flavor}
+: ${FLAVOR="fedora"}
+
+for container in $(findFlavor "${FLAVOR}"); do
+    echo "Building container: ${container}"
+    buildFlavor ${container}
 done
