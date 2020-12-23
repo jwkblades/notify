@@ -4,6 +4,6 @@ RUN dnf install -y \
     fedora-packager \
     fedora-review
 
-RUN usermode -a -G mock root
+RUN usermod -a -G mock root
 
 
