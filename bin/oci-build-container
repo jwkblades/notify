@@ -23,13 +23,15 @@ buildFlavor()
     local flavor="$(fileFlavor "${container}")"
     local type="$(containerType "${container}")"
     local version="$(./bin/version)"
-    warning "Searching for container image ${flavor}_notify_${type}:${version}"
-    if ./bin/oci-exec image exists "${flavor}_notify_${type}:${version}"; then
-        log "Container ${flavor}_notify_${type}:${version} exists, skipping."
+    local imageName="${flavor}_notify_${type}"
+
+    log "Searching for container image ${imageName}:${version}"
+    if ./bin/oci-exec image exists "${imageName}:${version}"; then
+        log "Container image ${imageName}:${version} exists, skipping."
         return 0
     fi
 
-    ./bin/oci-exec build -f "${container}" --tag=${flavor}_notify_${type}:latest --tag=${flavor}_notify_${type}:${version}
+    ./bin/oci-exec build -f "${container}" --tag=${imageName}:latest --tag=${imageName}:${version}
 }
 
 : ${FLAVOR="fedora"}
