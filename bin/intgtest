@@ -1,0 +1,91 @@
+#!/bin/bash
+source ./bin/utils.sh || exit 1
+
+successes=0
+failures=0
+test()
+{
+    local testname="${1}"
+    shift
+    ticker "${@}" ${testname} && (( successes += 1 )) || (( failures += 1 ))
+}
+
+invalidConfig()
+{
+    ./notify || true
+}
+
+timeoutTest()
+{
+    ./notify -t 0 "Testing" "A description"
+}
+
+notificationCloseSignal()
+{
+    local expected="${1}"
+    local signal="${2}"
+    local outFile="$(mktemp "/tmp/out-XXXXXX")"
+    local start=${SECONDS}
+    ./notify -o First -v 1 -o Second -v 2 -o "Third Option" -v 3 -t 1 "Testing it out" "A description again" >${outFile} &
+    local pid=$!
+    sleep 0.3
+    kill -${signal} ${pid} || true
+    wait ${pid} || true
+    local delta=$(( ${SECONDS} - ${start} ))
+
+    if [[ ${delta} -ge 10 ]]; then
+        log "Test run exceeded 10 seconds."
+        return 1
+    fi
+
+    local actual="$(cat ${outFile})"
+    if [[ "${actual}" != "${expected}" ]]; then
+        log "Expected value of '${expected}' did not match actual '${actual}'"
+        return 1
+    fi
+
+    return 0
+}
+
+notificationCloseSignalInvalid()
+{
+    local expected="${1}"
+    local signal="${2}"
+    local outFile="$(mktemp "/tmp/out-XXXXXX")"
+    local start=${SECONDS}
+    ./notify -t 1 "Testing it out" "A description again" >${outFile} &
+    local pid=$!
+    sleep 0.3
+    kill -${signal} ${pid} || true
+    wait ${pid} || true
+    local delta=$(( ${SECONDS} - ${start} ))
+
+    if [[ ${delta} -ge 10 ]]; then
+        log "Test run exceeded 10 seconds."
+        return 1
+    fi
+
+    local actual="$(cat ${outFile})"
+    if [[ "${actual}" != "${expected}" ]]; then
+        log "Expected value of '${expected}' did not match actual '${actual}'"
+        return 1
+    fi
+
+    return 0
+}
+
+test "Notify::Invalid" invalidConfig
+test "Notify::Timeout" timeoutTest
+test "Notify::CloseSignal" "notificationCloseSignal DEFAULT SIGHUP"
+test "Notify::DefaultSignal" "notificationCloseSignal DEFAULT SIGRTMIN"
+test "Notify::FirstSignal" "notificationCloseSignal 1 SIGRTMIN+1"
+test "Notify::SecondSignal" "notificationCloseSignal 2 SIGRTMIN+2"
+test "Notify::ThirdSignal" "notificationCloseSignal 3 SIGRTMIN+3"
+test "Notify::ThirdSignalInvalid" "notificationCloseSignalInvalid DEFAULT SIGRTMIN+3"
+
+echo "${successes} tests passed, ${failures} failed."
+if [[ ${failures} -eq 0 ]]; then
+    exit 0
+else
+    exit 1
+fi
