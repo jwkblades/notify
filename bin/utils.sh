@@ -3,6 +3,17 @@
 #       on its own.
 ###
 
+set -o errexit
+set -o errtrace
+set -o functrace
+set -o nounset
+set -o pipefail
+set -u
+shopt -s expand_aliases
+shopt -s checkwinsize
+
+trap abort SIGINT ERR
+
 # Log a message to stderr
 log()
 {
@@ -26,6 +37,19 @@ die()
 {
     error ${@}
     exit 1
+}
+
+# Print the current stack trace of the application, and then die.
+abort()
+{
+    # Print stacktrace
+    if [[ ${#FUNCNAME[@]} -gt 2 ]]; then
+        echo -e "$(tput setaf 1)$(tput bold)    Stacktrace ::" >&2
+        for (( frame=1; frame < ${#FUNCNAME[@]}-1; frame++ )); do
+            echo -e "$(tput setaf 1)$(tput bold)    ${BASH_SOURCE[$frame+1]}:${BASH_LINENO[$frame]} ${FUNCNAME[$frame]}" >&2
+        done
+    fi
+    die "${@}"
 }
 
 # Check if a command exists
