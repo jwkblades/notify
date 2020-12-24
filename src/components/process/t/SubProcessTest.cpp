@@ -7,6 +7,12 @@ TEST(SubProcessTemplateException, what)
     EXPECT_EQUAL(std::string("SubProcess filename template must have at least 6 'X' characters at the end of it."), e.what());
 }
 
+TEST(SubProcessTempFileException, what)
+{
+    SubProcessTempFileException e;
+    EXPECT_EQUAL(std::string("SubProcess was unable to set up the script file."), e.what());
+}
+
 TEST(SubProcess, filenameTooShort)
 {
     EXPECT_THROW(SubProcess p("/a", ""), SubProcessTemplateException);
@@ -32,6 +38,18 @@ sleep 1
 
     EXPECT_EQUAL(0, p.returnCode());
     EXPECT_NOT_EQUAL(-1, p.pid());
+}
+
+TEST(SubProcess, noRun)
+{
+    SubProcess p("/tmp/subProcessTest-XXXXXX",
+        R"__(#!/bin/bash
+
+sleep 1
+)__");
+
+    EXPECT_EQUAL(-1, p.returnCode());
+    EXPECT_EQUAL(-1, p.pid());
 }
 
 TEST(SubProcess, badReturnCode)

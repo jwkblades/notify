@@ -14,31 +14,21 @@ const char* SubProcessTemplateException::what(void) const noexcept
     return "SubProcess filename template must have at least 6 'X' characters at the end of it.";
 }
 
+const char* SubProcessTempFileException::what(void) const noexcept
+{
+    return "SubProcess was unable to set up the script file.";
+}
+
 SubProcess::SubProcess(const char* filename, const char* script):
     mPid(-1),
     mFilename(NULL),
-    mScript(script),
     mStdout(),
     mStderr(),
     mRc(-1)
 {
-    size_t len = strlen(filename);
-    if (len < SUB_PROCESS_TEMPLATE_LENGTH)
-    {
-        throw SubProcessTemplateException();
-    }
+    setupFilename(filename);
 
-    for (size_t i = len - 6; i < len; ++i)
-    {
-        if (filename[i] != 'X')
-        {
-            throw SubProcessTemplateException();
-        }
-    }
-
-    // NOTE: +1 here is for the '\0' character
-    mFilename = new char[len + 1];
-    memcpy(mFilename, filename, len + 1);
+    writeTempFileContents(script);
 }
 
 SubProcess::~SubProcess(void)
@@ -91,36 +81,6 @@ const std::string& SubProcess::stderr(void)
 
 int SubProcess::run(void)
 {
-    int fd = mkostemp(mFilename, O_CLOEXEC | O_SYNC);
-    if (fd == -1)
-    {
-        return -1;
-    }
-
-    size_t offset = 0;
-    size_t total = strlen(mScript);
-    ssize_t bytesWritten = 0;
-    while (offset < total)
-    {
-        bytesWritten = write(fd, mScript + offset, total - offset);
-        if (bytesWritten > 0)
-        {
-            offset += bytesWritten;
-        }
-        else
-        {
-            // In the case where we cannot write to the file, it means that we
-            // have either had it close unexpectedly on us, an error has
-            // happened, or we are for some reason litterally attempting to
-            // write 0 bytes. These are all error cases.
-            return -1;
-        }
-    }
-    close(fd);
-    if (chmod(mFilename, S_IRUSR | S_IWUSR | S_IXUSR) != 0)
-    {
-        return -1;
-    }
 
     pipe(mStdout);
     pipe(mStderr);
@@ -162,4 +122,57 @@ int SubProcess::wait(void)
         mRc = WEXITSTATUS(status);
     }
     return ret;
+}
+
+void SubProcess::setupFilename(const char* filename)
+{
+    size_t len = strlen(filename);
+    if (len < SUB_PROCESS_TEMPLATE_LENGTH)
+    {
+        throw SubProcessTemplateException();
+    }
+
+    for (size_t i = len - 6; i < len; ++i)
+    {
+        if (filename[i] != 'X')
+        {
+            throw SubProcessTemplateException();
+        }
+    }
+
+    // NOTE: +1 here is for the '\0' character
+    mFilename = new char[len + 1];
+    memcpy(mFilename, filename, len + 1);
+}
+
+void SubProcess::writeTempFileContents(const char* script)
+{
+    int fd = mkostemp(mFilename, O_CLOEXEC | O_SYNC);
+    if (fd == -1)
+    {
+        throw SubProcessTempFileException();
+    }
+
+    size_t offset = 0;
+    size_t total = strlen(script);
+    ssize_t bytesWritten = 0;
+    while (offset < total)
+    {
+        bytesWritten = write(fd, script + offset, total - offset);
+        // NOTE: Not being able to write any bytes is bad.
+        if (bytesWritten > 0)
+        {
+            offset += bytesWritten;
+        }
+        else
+        {
+            throw SubProcessTempFileException();
+        }
+    }
+
+    close(fd);
+    if (chmod(mFilename, S_IRUSR | S_IWUSR | S_IXUSR) != 0)
+    {
+        throw SubProcessTempFileException();
+    }
 }

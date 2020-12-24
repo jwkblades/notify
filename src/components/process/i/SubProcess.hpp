@@ -22,6 +22,19 @@ public:
 };
 
 /**
+ * An exception that will be thrown by SubProcess's constructor if writing out
+ * the script file runs into issue.
+ */
+class SubProcessTempFileException: public std::exception
+{
+public:
+    /**
+     * @return The exception reason.
+     */
+    const char* what(void) const noexcept override;
+};
+
+/**
  * SubProcess class, meant to take a script and be used to execute it.
  */
 class SubProcess
@@ -94,12 +107,14 @@ public:
 private:
     pid_t mPid;
     char* mFilename;
-    const char* const mScript;
     int mStdout[2];
     int mStderr[2];
     int mRc;
     std::string mStdoutString;
     std::string mStderrString;
+
+    void setupFilename(const char* filename);
+    void writeTempFileContents(const char* script);
 };
 
 #endif
