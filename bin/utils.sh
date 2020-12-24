@@ -97,7 +97,12 @@ ticker()
             current=${SECONDS}
             delta=$(( ${current} - ${start} ))
 
-            printf "$(tput setaf 248)$(tput bold)[ ]$(tput sgr0) %-$(( ${cols} - 15 ))s $(tput bold)[%02d:%02d:%02d]\r$(tput sgr0)" "${@}" $(( ${delta} / 3600 )) $(( (${delta} % 3600) / 60 )) $(( ${delta} % 60 ))
+            # NOTE: Leaving the cursor at the end of the line means that we
+            #       don't have annoying flashing while also not having to
+            #       disable the cursor from showing up. So it works nicer in
+            #       error-cases where we may die (or be killed) without being
+            #       able to re-enable the cursor first.
+            printf "\r$(tput setaf 248)$(tput bold)[ ]$(tput sgr0) %-$(( ${cols} - 15 ))s $(tput bold)[%02d:%02d:%02d]$(tput sgr0)" "${@}" $(( ${delta} / 3600 )) $(( (${delta} % 3600) / 60 )) $(( ${delta} % 60 ))
             sleep 1
         done
     ) &
@@ -113,9 +118,9 @@ ticker()
     wait ${tickerPid} || true
 
     if [[ ${rc} -eq 0 ]]; then
-        echo "$(tput setaf 2)$(tput bold)[✓]$(tput sgr0)"
+        echo -e "\r$(tput setaf 2)$(tput bold)[✓]$(tput sgr0)"
     else
-        echo "$(tput setaf 1)$(tput bold)[✘]$(tput sgr0)"
+        echo -e "\r$(tput setaf 1)$(tput bold)[✘]$(tput sgr0)"
         echo "    StdOut: ${outFile}"
         echo "    StdErr: ${errFile}"
     fi
