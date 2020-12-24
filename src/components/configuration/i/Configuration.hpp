@@ -47,14 +47,19 @@ public:
     int optIndex;
 
     /**
-     * Construct the application configuration
+     * Default constructor
+     */
+    Configuration(void);
+
+    /**
+     * Parse the application configuration
      *
      * @param argc The number of arguments being passed in.
      * @param argv The arguments
      * @param shortOptions The option string to be used for short options.
      * @param longOptions Long options to be used.
      */
-    Configuration(int argc, char** argv, const char* shortOptions, struct option* longOptions);
+    void parse(int argc, char** argv, const char* shortOptions, struct option* longOptions);
 
     /**
      * Is the configuration valid?

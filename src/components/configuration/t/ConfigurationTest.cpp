@@ -30,7 +30,8 @@ public:
  */
 TEST(Configuration, Base)
 {
-    Configuration c(0, NULL, "", NULL);
+    Configuration c;
+    c.parse(0, NULL, "", NULL);
     EXPECT_FALSE(c.valid());
 }
 
@@ -45,7 +46,8 @@ TEST(Configuration, Basic)
         "A title",
         "A simple description"
     };
-    Configuration c(3, (char**)args, "", NULL);
+    Configuration c;
+    c.parse(3, (char**)args, "", NULL);
     EXPECT_TRUE(c.valid());
     EXPECT_EQUAL("A title", c.title);
     EXPECT_EQUAL("A simple description", c.description);
@@ -62,7 +64,8 @@ TEST(Configuration, UnrecognizedOption)
         "A title",
         "A simple description"
     };
-    Configuration c(4, (char**)args, "", NULL);
+    Configuration c;
+    c.parse(4, (char**)args, "", NULL);
     EXPECT_FALSE(c.valid());
 }
 
@@ -92,7 +95,8 @@ TEST(Configuration, OptionsMatched)
         {"icon",         required_argument, 0, 'i'}
     };
 
-    Configuration c(7, (char**)args, "i:o:t:v:", longOptions);
+    Configuration c;
+    c.parse(7, (char**)args, "i:o:t:v:", longOptions);
     EXPECT_TRUE(c.valid());
     EXPECT_EQUAL("A title", c.title);
     EXPECT_EQUAL("A simple description", c.description);
@@ -143,7 +147,8 @@ TEST(Configuration, OptionsMaxMatched)
         {"icon",         required_argument, 0, 'i'}
     };
 
-    Configuration c(15, (char**)args, "i:o:t:v:", longOptions);
+    Configuration c;
+    c.parse(15, (char**)args, "i:o:t:v:", longOptions);
     EXPECT_TRUE(c.valid());
     EXPECT_EQUAL("A title", c.title);
     EXPECT_EQUAL("A simple description", c.description);
@@ -207,7 +212,8 @@ TEST(Configuration, OptionsOverMaxMatched)
         {"icon",         required_argument, 0, 'i'}
     };
 
-    Configuration c(19, (char**)args, "i:o:t:v:", longOptions);
+    Configuration c;
+    c.parse(19, (char**)args, "i:o:t:v:", longOptions);
     EXPECT_TRUE(c.valid());
     EXPECT_EQUAL("A title", c.title);
     EXPECT_EQUAL("A simple description", c.description);
@@ -259,7 +265,8 @@ TEST(Configuration, OptionsMismatched)
         {"icon",         required_argument, 0, 'i'}
     };
 
-    Configuration c(11, (char**)args, "i:o:t:v:", longOptions);
+    Configuration c;
+    c.parse(11, (char**)args, "i:o:t:v:", longOptions);
     EXPECT_TRUE(c.valid());
     EXPECT_EQUAL("A title", c.title);
     EXPECT_EQUAL("A simple description", c.description);
@@ -316,7 +323,8 @@ TEST(Configuration, LongOptions)
         {"icon",         required_argument, 0, 'i'}
     };
 
-    Configuration c(19, (char**)args, "i:o:t:v:", longOptions);
+    Configuration c;
+    c.parse(19, (char**)args, "i:o:t:v:", longOptions);
     EXPECT_TRUE(c.valid());
     EXPECT_EQUAL("A title", c.title);
     EXPECT_EQUAL("A simple description", c.description);

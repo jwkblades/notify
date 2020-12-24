@@ -17,7 +17,7 @@
 #include "Configuration.hpp"
 #include <iostream>
 
-Configuration::Configuration(int argc, char** argv, const char* shortOptions, struct option* longOptions):
+Configuration::Configuration(void):
     title(NULL),
     description(NULL),
     icon("dialog-information"),
@@ -26,6 +26,11 @@ Configuration::Configuration(int argc, char** argv, const char* shortOptions, st
     timeoutMinutes(0),
     optIndex(0),
     mIsValid(false)
+{
+    // empty
+}
+
+void Configuration::parse(int argc, char** argv, const char* shortOptions, struct option* longOptions)
 {
     int valIndex = 0;
     int index = 1;
