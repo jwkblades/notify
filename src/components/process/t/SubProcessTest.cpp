@@ -1,6 +1,12 @@
 #include "TestUtilities.hpp"
 #include "SubProcess.hpp"
 
+TEST(SubProcessTemplateException, what)
+{
+    SubProcessTemplateException e;
+    EXPECT_EQUAL(std::string("SubProcess filename template must have at least 6 'X' characters at the end of it."), e.what());
+}
+
 TEST(SubProcess, filenameTooShort)
 {
     EXPECT_THROW(SubProcess p("/a", ""), SubProcessTemplateException);
