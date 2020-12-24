@@ -79,7 +79,7 @@ Building within a container file is done like so:
 This will take charge of determining your container runtime environment,
 checking if you already have a build container image (or building it, if
 needed), and running `make` within the container. For more information, see the
-[Development Userdocs](./userdocs/developer/README.md).
+[Development Userdocs](./userdocs/development/README.md).
 
 ## Development Requirements
 
