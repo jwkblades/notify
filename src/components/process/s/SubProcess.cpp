@@ -20,7 +20,7 @@ SubProcess::SubProcess(const char* filename, const char* script):
     mScript(script),
     mStdout(),
     mStderr(),
-    mRc(0)
+    mRc(-1)
 {
     size_t len = strlen(filename);
     if (len < SUB_PROCESS_TEMPLATE_LENGTH)

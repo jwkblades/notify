@@ -25,6 +25,8 @@ TEST(SubProcess, simple)
 sleep 1
 )__");
 
+    EXPECT_EQUAL(-1, p.returnCode());
+
     p.run();
     p.wait();
 
@@ -39,6 +41,8 @@ TEST(SubProcess, badReturnCode)
 
 exit 1
 )__");
+
+    EXPECT_EQUAL(-1, p.returnCode());
 
     p.run();
     p.wait();
@@ -55,6 +59,8 @@ TEST(SubProcess, badReturnCode42)
 exit 42
 )__");
 
+    EXPECT_EQUAL(-1, p.returnCode());
+
     p.run();
     p.wait();
 
@@ -70,6 +76,8 @@ TEST(SubProcess, readOutput)
 echo -n "This is a test"
 echo -n "This is an error" >&2
 )__");
+
+    EXPECT_EQUAL(-1, p.returnCode());
 
     p.run();
     p.wait();
