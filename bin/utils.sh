@@ -66,14 +66,14 @@ ticker()
         local start=${SECONDS}
         local current=${start}
         local delta=0
-        local cols=${COLUMNS}
+        local cols=
 
         while [[ 0 == 0 ]]; do
-            cols=${COLUMNS}
+            cols=$(tput cols)
             current=${SECONDS}
             delta=$(( ${current} - ${start} ))
 
-            printf "$(tput setaf 248)$(tput bold)[ ]$(tput sgr0) %-$(( ${cols} - 25 ))s $(tput bold)[%02d:%02d:%02d]\r$(tput sgr0)" "${@}" $(( ${delta} / 3600 )) $(( (${delta} % 3600) / 60 )) $(( ${delta} % 60 ))
+            printf "$(tput setaf 248)$(tput bold)[ ]$(tput sgr0) %-$(( ${cols} - 15 ))s $(tput bold)[%02d:%02d:%02d]\r$(tput sgr0)" "${@}" $(( ${delta} / 3600 )) $(( (${delta} % 3600) / 60 )) $(( ${delta} % 60 ))
             sleep 1
         done
     ) &
@@ -85,8 +85,8 @@ ticker()
     ${cmd} 1>"${outFile}" 2>"${errFile}"
     local rc=$?
 
-    kill ${tickerPid} 2>/dev/null
-    wait ${tickerPid}
+    kill ${tickerPid} 2>/dev/null || true
+    wait ${tickerPid} || true
 
     if [[ ${rc} -eq 0 ]]; then
         echo "$(tput setaf 2)$(tput bold)[✓]$(tput sgr0)"
