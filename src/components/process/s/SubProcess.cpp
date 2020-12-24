@@ -117,8 +117,7 @@ int SubProcess::run(void)
         dup2(mStderr[1], fileno(::stderr));
 
         char* args[] = {NULL};
-        char* env[] = {NULL};
-        return execve(mFilename, args, env);
+        return execve(mFilename, args, environ);
     }
     else
     {
