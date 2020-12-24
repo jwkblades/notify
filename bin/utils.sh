@@ -124,4 +124,6 @@ ticker()
         echo "    StdOut: ${outFile}"
         echo "    StdErr: ${errFile}"
     fi
+
+    return ${rc}
 }
