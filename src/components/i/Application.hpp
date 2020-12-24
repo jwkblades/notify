@@ -84,6 +84,11 @@ private:
     NotifyNotification* mNotification;
     Configuration mConfig;
     std::thread mTimerThread;
+
+    /**
+     * Actually set up all the handlers
+     */
+    void setupSignalHandlers(void) const;
 };
 
 #endif

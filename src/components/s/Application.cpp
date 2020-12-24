@@ -54,41 +54,6 @@ Application::Application(int argc, char** argv):
     notify_notification_show(mNotification, NULL);
     mTimerThread = std::thread(timeoutThreadFunctor, mConfig.timeoutMinutes);
 
-    struct sigaction hupOld = {};
-    struct sigaction hupNew = {};
-    hupNew.sa_handler = [](int) -> void {
-        defaultExit();
-    };
-    sigaction(SIGHUP, &hupNew, &hupOld);
-
-    struct sigaction rt0Old = {};
-    struct sigaction rt0New = {};
-    rt0New.sa_handler = [](int) -> void {
-        Application::instance()->closeSignal();
-    };
-    sigaction(SIGRTMIN, &rt0New, &rt0Old);
-
-    struct sigaction rt1Old = {};
-    struct sigaction rt1New = {};
-    rt1New.sa_handler = [](int) -> void {
-        Application::instance()->closeFirstOption();
-    };
-    sigaction(SIGRTMIN+1, &rt1New, &rt1Old);
-
-    struct sigaction rt2Old = {};
-    struct sigaction rt2New = {};
-    rt2New.sa_handler = [](int) -> void {
-        Application::instance()->closeSecondOption();
-    };
-    sigaction(SIGRTMIN+2, &rt2New, &rt2Old);
-
-    struct sigaction rt3Old = {};
-    struct sigaction rt3New = {};
-    rt3New.sa_handler = [](int) -> void {
-        Application::instance()->closeThirdOption();
-    };
-    sigaction(SIGRTMIN+3, &rt3New, &rt3Old);
-
     instance(this);
     mReady = true;
 }
@@ -105,6 +70,7 @@ Application* Application::instance(Application* self)
     if (self && !oInstance)
     {
         oInstance = self;
+        self->setupSignalHandlers();
     }
     return oInstance;
 }
@@ -156,4 +122,42 @@ int Application::main(void)
     mTimerThread.join();
 
     return 0;
+}
+
+void Application::setupSignalHandlers(void) const
+{
+    struct sigaction hupOld = {};
+    struct sigaction hupNew = {};
+    hupNew.sa_handler = [](int) -> void {
+        defaultExit();
+    };
+    sigaction(SIGHUP, &hupNew, &hupOld);
+
+    struct sigaction rt0Old = {};
+    struct sigaction rt0New = {};
+    rt0New.sa_handler = [](int) -> void {
+        Application::instance()->closeSignal();
+    };
+    sigaction(SIGRTMIN, &rt0New, &rt0Old);
+
+    struct sigaction rt1Old = {};
+    struct sigaction rt1New = {};
+    rt1New.sa_handler = [](int) -> void {
+        Application::instance()->closeFirstOption();
+    };
+    sigaction(SIGRTMIN+1, &rt1New, &rt1Old);
+
+    struct sigaction rt2Old = {};
+    struct sigaction rt2New = {};
+    rt2New.sa_handler = [](int) -> void {
+        Application::instance()->closeSecondOption();
+    };
+    sigaction(SIGRTMIN+2, &rt2New, &rt2Old);
+
+    struct sigaction rt3Old = {};
+    struct sigaction rt3New = {};
+    rt3New.sa_handler = [](int) -> void {
+        Application::instance()->closeThirdOption();
+    };
+    sigaction(SIGRTMIN+3, &rt3New, &rt3Old);
 }
