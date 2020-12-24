@@ -1,6 +1,7 @@
 #include "Application.hpp"
 
 #include <gtk/gtk.h>
+#include <signal.h>
 
 Application::Application(int argc, char** argv):
     mReady(false),
@@ -37,6 +38,41 @@ Application::Application(int argc, char** argv):
     notify_notification_show(mNotification, NULL);
     mTimerThread = std::thread(timeoutThreadFunctor, mConfig.timeoutMinutes);
 
+    struct sigaction hupOld = {};
+    struct sigaction hupNew = {};
+    hupNew.sa_handler = [](int) -> void {
+        defaultExit();
+    };
+    sigaction(SIGHUP, &hupNew, &hupOld);
+
+    struct sigaction rt0Old = {};
+    struct sigaction rt0New = {};
+    rt0New.sa_handler = [](int) -> void {
+        Application::instance()->closeSignal();
+    };
+    sigaction(SIGRTMIN, &rt0New, &rt0Old);
+
+    struct sigaction rt1Old = {};
+    struct sigaction rt1New = {};
+    rt1New.sa_handler = [](int) -> void {
+        Application::instance()->closeFirstOption();
+    };
+    sigaction(SIGRTMIN+1, &rt1New, &rt1Old);
+
+    struct sigaction rt2Old = {};
+    struct sigaction rt2New = {};
+    rt2New.sa_handler = [](int) -> void {
+        Application::instance()->closeSecondOption();
+    };
+    sigaction(SIGRTMIN+2, &rt2New, &rt2Old);
+
+    struct sigaction rt3Old = {};
+    struct sigaction rt3New = {};
+    rt3New.sa_handler = [](int) -> void {
+        Application::instance()->closeThirdOption();
+    };
+    sigaction(SIGRTMIN+3, &rt3New, &rt3Old);
+
     instance(this);
     mReady = true;
 }
@@ -61,6 +97,36 @@ void Application::closeSignal(void) const
 {
     static const char* action = "default";
     close(mNotification, (char*)action, NULL);
+}
+
+void Application::closeFirstOption(void) const
+{
+    if (mConfig.optIndex < 1)
+    {
+        closeSignal();
+        return;
+    }
+    close(mNotification, (char*)mConfig.values[0], NULL);
+}
+
+void Application::closeSecondOption(void) const
+{
+    if (mConfig.optIndex < 2)
+    {
+        closeFirstOption();
+        return;
+    }
+    close(mNotification, (char*)mConfig.values[1], NULL);
+}
+
+void Application::closeThirdOption(void) const
+{
+    if (mConfig.optIndex < 3)
+    {
+        closeSecondOption();
+        return;
+    }
+    close(mNotification, (char*)mConfig.values[2], NULL);
 }
 
 int Application::main(void)

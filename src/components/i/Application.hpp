@@ -17,6 +17,9 @@ public:
     static Application* instance(Application* self = NULL);
 
     void closeSignal(void) const;
+    void closeFirstOption(void) const;
+    void closeSecondOption(void) const;
+    void closeThirdOption(void) const;
 
     int main(void);
 private:
