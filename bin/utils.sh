@@ -108,11 +108,23 @@ ticker()
     ) &
     local tickerPid=$!
 
+    closeTicker()
+    {
+        kill ${tickerPid} || true
+    }
+    trap closeTicker ERR
+
     local outFile="$(mktemp "/tmp/out-XXXXXX")"
     local errFile="$(mktemp "/tmp/err-XXXXXX")"
+    local rc=
 
-    ${cmd} 1>"${outFile}" 2>"${errFile}"
-    local rc=$?
+    if [[ "${VERBOSE:-0}" -eq 1 ]]; then
+        ${cmd}
+        rc=$?
+    else
+        ${cmd} 1>"${outFile}" 2>"${errFile}"
+        rc=$?
+    fi
 
     kill ${tickerPid} 2>/dev/null || true
     wait ${tickerPid} || true
