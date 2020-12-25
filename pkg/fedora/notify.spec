@@ -1,11 +1,11 @@
 Name: notify
-Version: 0.0.1
-Release: 1%{?dist}
+Version: {{VERSION_NUMBER}}
+Release: {{VERSION_BUILD}}%{?dist}
 Summary: Scriptable desktop notifications for Linux
 
 License: ASL 2.0
 URL: https://github.com/jwkblades/notify
-Source0: https://github.com/jwkblades/notify/archive/%{name}-%{version}.tgz
+Source0: https://github.com/jwkblades/notify/archive/%{name}-%{version}-{{VERSION_BUILD}}.tgz
 
 BuildRoot: %{_topdir}/BUILDROOT/
 BuildRequires: bash
@@ -37,7 +37,7 @@ strip --strip-all notify
 %check
 export FLAVOR=""
 make test
-./test
+./test --gtest_filter="-Integration.*"
 
 %install
 mkdir -p %{buildroot}%{_bindir}
