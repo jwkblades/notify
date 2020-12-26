@@ -51,9 +51,6 @@ Application::Application(int argc, char** argv):
     g_signal_connect(G_OBJECT(mNotification), "closed", defaultExit, mNotification);
     notify_notification_set_urgency(mNotification, NOTIFY_URGENCY_CRITICAL);
 
-    notify_notification_show(mNotification, NULL);
-    mTimerThread = std::thread(timeoutThreadFunctor, mConfig.timeoutMinutes);
-
     instance(this);
     mReady = true;
 }
@@ -117,6 +114,9 @@ int Application::main(void)
     {
         return 1;
     }
+
+    notify_notification_show(mNotification, NULL);
+    mTimerThread = std::thread(timeoutThreadFunctor, mConfig.timeoutMinutes);
 
     gtk_main();
     mTimerThread.join();
