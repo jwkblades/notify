@@ -30,11 +30,11 @@ Example" "A simple example of a notification in <WM>"`
 
 ### Gnome
 
-![Gnome notification](userdocs/assets/images/Gnome_notification_example.png)
+![Gnome notification](docs/assets/images/Gnome_notification_example.png)
 
 ### KDE
 
-![KDE notification](userdocs/assets/images/KDE_notification_example.png)
+![KDE notification](docs/assets/images/KDE_notification_example.png)
 
 ## Usage
 
@@ -79,7 +79,7 @@ Building within a container file is done like so:
 This will take charge of determining your container runtime environment,
 checking if you already have a build container image (or building it, if
 needed), and running `make` within the container. For more information, see the
-[Development Userdocs](./userdocs/development/README.md).
+[Development Documentation](./docs/development/README.md).
 
 ## Development Requirements
 
@@ -88,7 +88,7 @@ and test notify. If your distribution isn't listed, feel free to add it!
 
 If you are interested in reading further information on development 
 practices and how to contribute, see the 
-[Development Userdocs](./userdocs/development/README.md).
+[Development Documentation](./docs/development/README.md).
 
 ### Fedora
 
