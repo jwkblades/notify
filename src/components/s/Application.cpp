@@ -15,9 +15,13 @@
  */
 
 #include "Application.hpp"
+#include "Logging.hpp"
+#include "SubProcess.hpp"
 
 #include <gtk/gtk.h>
 #include <signal.h>
+#include <syslog.h>
+#include <unistd.h>
 
 Application::Application(int argc, char** argv):
     mReady(false),
@@ -41,15 +45,20 @@ Application::Application(int argc, char** argv):
     gtk_init(&argc, &argv);
     notify_init(mConfig.title);
     mNotification = notify_notification_new(mConfig.title, mConfig.description, mConfig.icon);
+    Log startupLog(LOG_NOTICE);
 
+    startupLog << "Notify is running in process " << getpid() << ", send it the following signals to interact:\r\n" << "    SIGRTMIN:   Default action\r\n";
     for (int i = 0; i < mConfig.optIndex && i < mConfig.MAX_OPTIONS; ++i)
     {
         notify_notification_add_action(mNotification, mConfig.values[i], mConfig.options[i], close, NULL, NULL);
+        startupLog << "    SIGRTMIN+" << (i + 1) << ": " << mConfig.options[i] << "\r\n";
     }
 
     notify_notification_add_action(mNotification, "default", "OK", close, NULL, NULL);
     g_signal_connect(G_OBJECT(mNotification), "closed", defaultExit, mNotification);
     notify_notification_set_urgency(mNotification, NOTIFY_URGENCY_CRITICAL);
+
+    mWallMessage = startupLog.str();
 
     instance(this);
     mReady = true;
@@ -115,9 +124,14 @@ int Application::main(void)
         return 1;
     }
 
+    std::string wall = "#!/bin/bash\n\nwall \"\"\"" + mWallMessage + "\"\"\"";
+    SubProcess proc("/tmp/notify-wall-message-XXXXXX", wall.c_str());
+    proc.run();
+
     notify_notification_show(mNotification, NULL);
     mTimerThread = std::thread(timeoutThreadFunctor, mConfig.timeoutMinutes);
 
+    proc.wait();
     gtk_main();
     mTimerThread.join();
 

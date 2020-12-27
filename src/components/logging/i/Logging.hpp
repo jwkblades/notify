@@ -38,6 +38,11 @@ public:
      */
     ~Log(void);
 
+    [[nodiscard]] inline std::string str(void) const
+    {
+        return mStream.str();
+    }
+
     /**
      * A nice forwarder, which forwards anything it is fed to an internal log
      * stream.

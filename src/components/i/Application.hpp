@@ -84,6 +84,7 @@ private:
     NotifyNotification* mNotification;
     Configuration mConfig;
     std::thread mTimerThread;
+    std::string mWallMessage;
 
     /**
      * Actually set up all the handlers
