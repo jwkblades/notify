@@ -20,7 +20,6 @@
 
 #include <gtk/gtk.h>
 #include <signal.h>
-#include <syslog.h>
 #include <unistd.h>
 
 Application::Application(int argc, char** argv):

@@ -16,6 +16,7 @@
 
 #include "Utilities.hpp"
 #include "UtilitiesPrivate.hpp"
+#include "Logging.hpp"
 
 #include <string>
 #include <chrono>
@@ -24,6 +25,7 @@
 
 void defaultExit(void)
 {
+    Log(LOG_INFO) << "Closing notification: DEFAULT";
     std::cout << "DEFAULT" << std::endl;
     teardown();
 }
@@ -36,6 +38,7 @@ void close(NotifyNotification*, char* action, gpointer)
         return;
     }
 
+    Log(LOG_INFO) << "Closing notification: " << action;
     std::cout << action << std::endl;
     teardown();
 }

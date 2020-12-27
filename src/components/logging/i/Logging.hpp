@@ -17,6 +17,8 @@
 #ifndef __NOTIFY_LOGGING_H
 #define __NOTIFY_LOGGING_H
 
+#include <syslog.h>
+
 #include <sstream>
 
 /**

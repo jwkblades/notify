@@ -36,9 +36,5 @@ LogConnectionManager::~LogConnectionManager(void)
 
 void ensureLoggingInitialized(void)
 {
-    static LogConnectionManager* oLogManager = NULL;
-    if (!oLogManager)
-    {
-        oLogManager = new LogConnectionManager();
-    }
+    static LogConnectionManager oLogManager;
 }
