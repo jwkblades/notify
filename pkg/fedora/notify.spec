@@ -7,6 +7,9 @@ License: ASL 2.0
 URL: https://github.com/jwkblades/notify
 Source0: https://github.com/jwkblades/notify/archive/%{name}-%{version}-{{VERSION_BUILD}}.tgz
 
+Requires: bash
+Requires: util-linux
+
 BuildRoot: %{_topdir}/BUILDROOT/
 BuildRequires: bash
 BuildRequires: binutils
@@ -37,7 +40,7 @@ strip --strip-all notify
 %check
 export FLAVOR=""
 make test
-./test --gtest_filter="-Integration.*"
+./test
 
 %install
 mkdir -p %{buildroot}%{_bindir}
