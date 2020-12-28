@@ -56,6 +56,9 @@ rm -rf notify %{buildroot}
 %license LICENSE
 
 %changelog
+* Mon Dec 28 2020 James Blades <jwkblades+git@gmail.com> - 1.0.0-6
+- Post notification title and description to wall as well
+
 * Mon Dec 28 2020 James Blades <jwkblades+git@gmail.com> - 1.0.0-1
 - Allow notify to run in headless mode.
 - Post notification options to wall
