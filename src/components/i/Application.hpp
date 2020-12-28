@@ -18,9 +18,8 @@
 #define __NOTIFY_APPLICATION_H
 
 #include "Configuration.hpp"
+#include "GUI.hpp"
 #include "Utilities.hpp"
-
-#include <libnotify/notify.h>
 
 #include <thread>
 
@@ -54,38 +53,23 @@ public:
     static Application* instance(Application* self = NULL);
 
     /**
-     * Callback used when we are told to close (by a SIGHUP, or SIGRTMIN)
-     */
-    void closeSignal(void) const;
-
-    /**
-     * Callback used when the first option signal is sent (SIGRTMIN+1)
-     */
-    void closeFirstOption(void) const;
-
-    /**
-     * Callback used when the second option signal is sent (SIGRTMIN+2)
-     */
-    void closeSecondOption(void) const;
-
-    /**
-     * Callback used when the third option signal is sent (SIGRTMIN+3)
-     */
-    void closeThirdOption(void) const;
-
-    /**
      * The main application loop, doesn't return until the application is done.
      *
      * @return The return code of the application
      */
     int main(void);
+
+    /**
+     * Quit the application, breaking out of its main loop and preparing for
+     * exit.
+     */
+    void quit(void);
 private:
     bool mReady;
-    NotifyNotification* mNotification;
     Configuration mConfig;
+    GUI* mGui;
     std::thread mTimerThread;
     std::string mWallMessage;
-
     /**
      * Actually set up all the handlers
      */

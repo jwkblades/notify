@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
+#include "Application.hpp"
+#include "Logging.hpp"
 #include "Utilities.hpp"
 #include "UtilitiesPrivate.hpp"
-#include "Logging.hpp"
 
-#include <string>
 #include <chrono>
 #include <iostream>
+#include <string>
+
 #include <unistd.h>
 
 void defaultExit(void)
@@ -94,6 +96,6 @@ bool notificationExitNow(bool set)
 void teardown(void)
 {
     notificationExitNow(true);
-    gtk_main_quit();
+    Application::instance()->quit(); 
 }
 

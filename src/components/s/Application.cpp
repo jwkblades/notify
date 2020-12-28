@@ -21,14 +21,13 @@
 
 #include <algorithm>
 
-#include <gtk/gtk.h>
 #include <signal.h>
 #include <unistd.h>
 
 Application::Application(int argc, char** argv):
     mReady(false),
-    mNotification(NULL),
-    mConfig()
+    mConfig(),
+    mGui(NULL)
 {
     static const std::string find("\"");
     static const std::string repl("\\\"");
@@ -46,23 +45,16 @@ Application::Application(int argc, char** argv):
         return;
     }
 
-    gtk_init(&argc, &argv);
-    notify_init(mConfig.title);
-    mNotification = notify_notification_new(mConfig.title, mConfig.description, mConfig.icon);
     Log startupLog(LOG_NOTICE);
 
     startupLog << "Notify is running in process " << getpid() << ", send it the following signals to interact:\r\n" << "    SIGRTMIN:   Default action\r\n";
     for (int i = 0; i < mConfig.optIndex && i < mConfig.MAX_OPTIONS; ++i)
     {
-        notify_notification_add_action(mNotification, mConfig.values[i], mConfig.options[i], close, NULL, NULL);
         startupLog << "    SIGRTMIN+" << (i + 1) << ": " << sanitizeForBash(mConfig.options[i]) << "\r\n";
     }
 
-    notify_notification_add_action(mNotification, "default", "OK", close, NULL, NULL);
-    g_signal_connect(G_OBJECT(mNotification), "closed", defaultExit, mNotification);
-    notify_notification_set_urgency(mNotification, NOTIFY_URGENCY_CRITICAL);
-
     mWallMessage = startupLog.str();
+    mGui = new GUI(argc, argv, mConfig);
 
     instance(this);
     mReady = true;
@@ -70,8 +62,7 @@ Application::Application(int argc, char** argv):
 
 Application::~Application(void)
 {
-    notify_notification_close(mNotification, NULL);
-    notify_uninit();
+    delete mGui;
 }
 
 Application* Application::instance(Application* self)
@@ -85,42 +76,6 @@ Application* Application::instance(Application* self)
     return oInstance;
 }
 
-void Application::closeSignal(void) const
-{
-    static const char* action = "default";
-    close(mNotification, (char*)action, NULL);
-}
-
-void Application::closeFirstOption(void) const
-{
-    if (mConfig.optIndex < 1)
-    {
-        closeSignal();
-        return;
-    }
-    close(mNotification, (char*)mConfig.values[0], NULL);
-}
-
-void Application::closeSecondOption(void) const
-{
-    if (mConfig.optIndex < 2)
-    {
-        closeFirstOption();
-        return;
-    }
-    close(mNotification, (char*)mConfig.values[1], NULL);
-}
-
-void Application::closeThirdOption(void) const
-{
-    if (mConfig.optIndex < 3)
-    {
-        closeSecondOption();
-        return;
-    }
-    close(mNotification, (char*)mConfig.values[2], NULL);
-}
-
 int Application::main(void)
 {
     if (!mReady)
@@ -132,14 +87,19 @@ int Application::main(void)
     SubProcess proc("/tmp/notify-wall-message-XXXXXX", wall.c_str());
     proc.run();
 
-    notify_notification_show(mNotification, NULL);
+    mGui->show();
     mTimerThread = std::thread(timeoutThreadFunctor, mConfig.timeoutMinutes);
 
     proc.wait();
-    gtk_main();
+    mGui->main();
     mTimerThread.join();
 
     return 0;
+}
+
+void Application::quit(void)
+{
+    mGui->quit();
 }
 
 void Application::setupSignalHandlers(void) const
@@ -154,28 +114,28 @@ void Application::setupSignalHandlers(void) const
     struct sigaction rt0Old = {};
     struct sigaction rt0New = {};
     rt0New.sa_handler = [](int) -> void {
-        Application::instance()->closeSignal();
+        Application::instance()->mGui->closeSignal();
     };
     sigaction(SIGRTMIN, &rt0New, &rt0Old);
 
     struct sigaction rt1Old = {};
     struct sigaction rt1New = {};
     rt1New.sa_handler = [](int) -> void {
-        Application::instance()->closeFirstOption();
+        Application::instance()->mGui->closeFirstOption();
     };
     sigaction(SIGRTMIN+1, &rt1New, &rt1Old);
 
     struct sigaction rt2Old = {};
     struct sigaction rt2New = {};
     rt2New.sa_handler = [](int) -> void {
-        Application::instance()->closeSecondOption();
+        Application::instance()->mGui->closeSecondOption();
     };
     sigaction(SIGRTMIN+2, &rt2New, &rt2Old);
 
     struct sigaction rt3Old = {};
     struct sigaction rt3New = {};
     rt3New.sa_handler = [](int) -> void {
-        Application::instance()->closeThirdOption();
+        Application::instance()->mGui->closeThirdOption();
     };
     sigaction(SIGRTMIN+3, &rt3New, &rt3Old);
 }
