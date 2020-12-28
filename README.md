@@ -9,14 +9,14 @@ handles natively, but instead aims to be a better alternative to `notify-send`
 
 ## Goals
 
-* [ ] Working across multiple distros 
-* [ ] Working on multiple window managers (Gnome and KDE at least) 
-* [ ] Working on headless systems  
-* [ ] Offering means for user interaction with the notification (such as 
-  buttons, signals, etc.)  
-* [ ] Ability to specify a timeout (in minutes) that the notification expires 
+* [X] Working across multiple distros
+* [X] Working on multiple window managers (Gnome and KDE at least)
+* [X] Working on headless systems
+* [X] Offering means for user interaction with the notification (such as
+  buttons, signals, etc.)
+* [X] Ability to specify a timeout (in minutes) that the notification expires
   after
-* [ ] Fully scriptable
+* [X] Fully scriptable
 * [ ] Attempt to not be locked in to a single platform
 
 ## What it looks like
