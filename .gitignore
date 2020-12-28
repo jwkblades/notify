@@ -2,8 +2,8 @@
 .idea
 .clangd
 compile_commands.json
-notify
-test
+/notify
+/test
 /pkg/fedora/archive/*-dirty.spec
 /*-notify
 /*-test
