@@ -110,10 +110,23 @@ ticker()
         done
     ) &
     local tickerPid=$!
+    # Give the ticker a chance to complete its first cycle before continuing on
+    sleep .003
 
     closeTicker()
     {
-        kill ${tickerPid} || true
+        local rc=${1:-1}
+        kill ${tickerPid} 2>/dev/null || true
+        wait ${tickerPid} || true
+
+        if [[ ${rc} -eq 0 ]]; then
+            echo -e "\r$(tput setaf 2)$(tput bold)[✓]$(tput sgr0)"
+        else
+            echo -e "\r$(tput setaf 1)$(tput bold)[✘]$(tput sgr0)"
+            echo "    StdOut: ${outFile}"
+            echo "    StdErr: ${errFile}"
+        fi
+
     }
     trap closeTicker ERR
 
@@ -122,23 +135,17 @@ ticker()
     local rc=
 
     if [[ "${VERBOSE:-0}" -eq 1 ]]; then
-        ${cmd}
+        (
+            ${cmd}
+        )
         rc=$?
     else
-        ${cmd} 1>"${outFile}" 2>"${errFile}"
+        (
+            ${cmd} 1>"${outFile}" 2>"${errFile}"
+        )
         rc=$?
     fi
 
-    kill ${tickerPid} 2>/dev/null || true
-    wait ${tickerPid} || true
-
-    if [[ ${rc} -eq 0 ]]; then
-        echo -e "\r$(tput setaf 2)$(tput bold)[✓]$(tput sgr0)"
-    else
-        echo -e "\r$(tput setaf 1)$(tput bold)[✘]$(tput sgr0)"
-        echo "    StdOut: ${outFile}"
-        echo "    StdErr: ${errFile}"
-    fi
-
+    closeTicker ${rc}
     return ${rc}
 }
