@@ -30,3 +30,6 @@ mkdir -p build
 for pkg in $(find /root/rpmbuild -name "*.rpm"); do
     cp "${pkg}" build/
 done
+
+mkdir -p pkg/fedora/archive/
+cp "${specFile}" "pkg/fedora/archive/notify-${VERSION_FULL}.spec"
