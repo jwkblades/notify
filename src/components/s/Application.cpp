@@ -47,7 +47,7 @@ Application::Application(int argc, char** argv):
 
     Log startupLog(LOG_NOTICE);
 
-    startupLog << "Notify is running in process " << getpid() << ", send it the following signals to interact:\r\n" << "    SIGRTMIN:   Default action\r\n";
+    startupLog << "Notify is running in process " << getpid() << ", send it the following signals to interact:\r\n" << sanitizeForBash(mConfig.title) << "\r\n    " << sanitizeForBash(mConfig.description) << "\r\n    SIGRTMIN:   Default action\r\n";
     for (int i = 0; i < mConfig.optIndex && i < mConfig.MAX_OPTIONS; ++i)
     {
         startupLog << "    SIGRTMIN+" << (i + 1) << ": " << sanitizeForBash(mConfig.options[i]) << "\r\n";
