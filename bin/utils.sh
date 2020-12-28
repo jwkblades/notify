@@ -105,7 +105,7 @@ ticker()
             #       disable the cursor from showing up. So it works nicer in
             #       error-cases where we may die (or be killed) without being
             #       able to re-enable the cursor first.
-            printf "\r$(tput setaf 248)$(tput bold)[%s]$(tput sgr0) %-$(( ${cols} - 15 ))s $(tput bold)[%02d:%02d:%02d]$(tput sgr0)" "${spin}" "${@}" $(( ${delta} / 3600 )) $(( (${delta} % 3600) / 60 )) $(( ${delta} % 60 ))
+            printf "\r$(tput bold)[%s]$(tput sgr0) %-$(( ${cols} - 15 ))s $(tput bold)[%02d:%02d:%02d]$(tput sgr0)" "${spin}" "${@}" $(( ${delta} / 3600 )) $(( (${delta} % 3600) / 60 )) $(( ${delta} % 60 ))
             sleep 1
         done
     ) &
