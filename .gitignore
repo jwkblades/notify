@@ -4,6 +4,7 @@
 compile_commands.json
 notify
 test
+/pkg/fedora/archive/*-dirty.spec
 /*-notify
 /*-test
 /build/
