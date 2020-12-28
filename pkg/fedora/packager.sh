@@ -5,7 +5,8 @@ set -e
 export HOME="/root"
 export VERSION_FULL="$(./bin/version)"
 export VERSION_NUMBER="$(echo -n "${VERSION_FULL}" | cut -d- -f1)"
-export VERSION_BUILD="$(echo -n "${VERSION_FULL}" | cut -d- -f2)"
+# Build numbers start from 1
+export VERSION_BUILD=$(( 1 + $(echo -n "${VERSION_FULL}" | cut -d- -f2) ))
 export VERSION_HASH="$(echo -n "${VERSION_FULL}" | cut -d- -f3)"
 
 rpmdev-setuptree
