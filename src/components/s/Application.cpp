@@ -16,6 +16,7 @@
 
 #include "Application.hpp"
 #include "Logging.hpp"
+#include "ProcessUtilities.hpp"
 #include "SubProcess.hpp"
 
 #include <algorithm>
@@ -23,28 +24,6 @@
 #include <gtk/gtk.h>
 #include <signal.h>
 #include <unistd.h>
-
-std::string sanitize(const char* s)
-{
-    std::string ret="";
-    for (; *s; ++s)
-    {
-        switch(*s)
-        {
-        case '"':
-            ret += "\\\"";
-            break;
-        case '\\':
-            ret += "\\\\";
-            break;
-        default:
-            ret += *s;
-            break;
-        }
-    }
-
-    return ret;
-}
 
 Application::Application(int argc, char** argv):
     mReady(false),
@@ -76,7 +55,7 @@ Application::Application(int argc, char** argv):
     for (int i = 0; i < mConfig.optIndex && i < mConfig.MAX_OPTIONS; ++i)
     {
         notify_notification_add_action(mNotification, mConfig.values[i], mConfig.options[i], close, NULL, NULL);
-        startupLog << "    SIGRTMIN+" << (i + 1) << ": " << sanitize(mConfig.options[i]) << "\r\n";
+        startupLog << "    SIGRTMIN+" << (i + 1) << ": " << sanitizeForBash(mConfig.options[i]) << "\r\n";
     }
 
     notify_notification_add_action(mNotification, "default", "OK", close, NULL, NULL);
