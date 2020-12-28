@@ -19,6 +19,13 @@
 
 #include <string>
 
+/**
+ * Sanitize a string for bash scripts, ensuring that it will not be capable of
+ * breaking out and injecting arbitrary commands into a bash sub process.
+ *
+ * @param The string to sanitize
+ * @return The sanitized string
+ */
 std::string sanitizeForBash(const char* s);
 
 #endif
