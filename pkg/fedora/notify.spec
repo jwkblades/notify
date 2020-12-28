@@ -56,5 +56,10 @@ rm -rf notify %{buildroot}
 %license LICENSE
 
 %changelog
+* Mon Dec 28 2020 James Blades <jwkblades+git@gmail.com> - 1.0.0-1
+- Allow notify to run in headless mode.
+- Post notification options to wall
+- Listen to signals to select each of the options
+
 * Tue Dec 22 2020 James Blades <jwkblades+git@gmail.com> - 0.0.1-1
 - Initial RPM build
