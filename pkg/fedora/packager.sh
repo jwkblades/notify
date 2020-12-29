@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 export HOME="/root"
@@ -20,12 +19,16 @@ specFile="/root/rpmbuild/SPECS/notify.spec"
 cp pkg/fedora/notify.spec ${specFile}
 sed -i "s/{{VERSION_NUMBER}}/${VERSION_NUMBER}/g" ${specFile}
 sed -i "s/{{VERSION_BUILD}}/${VERSION_BUILD}/g" ${specFile}
-rpmbuild -ba ${specFile}
+
+latest=33
+for rel in $(seq 32 ${latest}); do
+    rpmbuild -D "fedora ${rel}" -ba ${specFile}
+done
 
 rpmlint ${specFile} /root/rpmbuild/SRPMS/notify-*.rpm
 rpmlint ${specFile} /root/rpmbuild/RPMS/*/notify-*.rpm
 
-mock --verbose /root/rpmbuild/SRPMS/notify-${VERSION_NUMBER}-${VERSION_BUILD}.fc32.src.rpm
+mock --verbose /root/rpmbuild/SRPMS/notify-${VERSION_NUMBER}-${VERSION_BUILD}.fc${latest}.src.rpm
 
 mkdir -p build
 for pkg in $(find /root/rpmbuild -name "*.rpm"); do
