@@ -35,7 +35,7 @@ Application::Application(int argc, char** argv):
         {"option",       required_argument, 0, 'o'},
         {"value",        required_argument, 0, 'v'},
         {"timeout",      required_argument, 0, 't'},
-        {"icon",         required_argument, 0, 'i'}
+        {"icon",         required_argument, 0, 'i'},
     };
 
     mConfig.parse(argc, argv, "i:o:t:v:", longOptions);

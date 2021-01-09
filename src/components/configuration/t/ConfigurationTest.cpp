@@ -44,7 +44,7 @@ TEST(Configuration, Basic)
     const char* args[] = {
         "Bogus application instance",
         "A title",
-        "A simple description"
+        "A simple description",
     };
     Configuration c;
     c.parse(3, (char**)args, "", NULL);
@@ -62,7 +62,7 @@ TEST(Configuration, UnrecognizedOption)
         "Bogus application instance",
         "--waffleIron",
         "A title",
-        "A simple description"
+        "A simple description",
     };
     Configuration c;
     c.parse(4, (char**)args, "", NULL);
@@ -77,7 +77,7 @@ TEST(Configuration, OptionsMatched)
 {
     kvPair option1 = {
         .key = "First",
-        .value = "1"
+        .value = "1",
     };
     const char* args[] = {
         "Bogus application instance",
@@ -86,13 +86,13 @@ TEST(Configuration, OptionsMatched)
         "-v",
         option1.value,
         "A title",
-        "A simple description"
+        "A simple description",
     };
     struct option longOptions[] = {
         {"option",       required_argument, 0, 'o'},
         {"value",        required_argument, 0, 'v'},
         {"timeout",      required_argument, 0, 't'},
-        {"icon",         required_argument, 0, 'i'}
+        {"icon",         required_argument, 0, 'i'},
     };
 
     Configuration c;
@@ -113,15 +113,15 @@ TEST(Configuration, OptionsMaxMatched)
 {
     kvPair option1 = {
         .key = "First",
-        .value = "1"
+        .value = "1",
     };
     kvPair option2 = {
         .key = "Second",
-        .value = "2"
+        .value = "2",
     };
     kvPair option3 = {
         .key = "Third",
-        .value = "3"
+        .value = "3",
     };
     const char* args[] = {
         "Bogus application instance",
@@ -138,13 +138,13 @@ TEST(Configuration, OptionsMaxMatched)
         "-v",
         option3.value,
         "A title",
-        "A simple description"
+        "A simple description",
     };
     struct option longOptions[] = {
         {"option",       required_argument, 0, 'o'},
         {"value",        required_argument, 0, 'v'},
         {"timeout",      required_argument, 0, 't'},
-        {"icon",         required_argument, 0, 'i'}
+        {"icon",         required_argument, 0, 'i'},
     };
 
     Configuration c;
@@ -170,19 +170,19 @@ TEST(Configuration, OptionsOverMaxMatched)
 {
     kvPair option1 = {
         .key = "First",
-        .value = "1"
+        .value = "1",
     };
     kvPair option2 = {
         .key = "Second",
-        .value = "2"
+        .value = "2",
     };
     kvPair option3 = {
         .key = "Third",
-        .value = "3"
+        .value = "3",
     };
     kvPair option4 = {
         .key = "Fourth",
-        .value = "4"
+        .value = "4",
     };
     const char* args[] = {
         "Bogus application instance",
@@ -203,13 +203,13 @@ TEST(Configuration, OptionsOverMaxMatched)
         "-v",
         option4.value,
         "A title",
-        "A simple description"
+        "A simple description",
     };
     struct option longOptions[] = {
         {"option",       required_argument, 0, 'o'},
         {"value",        required_argument, 0, 'v'},
         {"timeout",      required_argument, 0, 't'},
-        {"icon",         required_argument, 0, 'i'}
+        {"icon",         required_argument, 0, 'i'},
     };
 
     Configuration c;
@@ -235,15 +235,15 @@ TEST(Configuration, OptionsMismatched)
 {
     kvPair option1 = {
         .key = "First",
-        .value = "1"
+        .value = "1",
     };
     kvPair option2 = {
         .key = "Second",
-        .value = "2"
+        .value = "2",
     };
     kvPair option3 = {
         .key = "Third",
-        .value = "3"
+        .value = "3",
     };
     const char* args[] = {
         "Bogus application instance",
@@ -256,13 +256,13 @@ TEST(Configuration, OptionsMismatched)
         "-o",
         option3.key,
         "A title",
-        "A simple description"
+        "A simple description",
     };
     struct option longOptions[] = {
         {"option",       required_argument, 0, 'o'},
         {"value",        required_argument, 0, 'v'},
         {"timeout",      required_argument, 0, 't'},
-        {"icon",         required_argument, 0, 'i'}
+        {"icon",         required_argument, 0, 'i'},
     };
 
     Configuration c;
@@ -283,15 +283,15 @@ TEST(Configuration, LongOptions)
 {
     kvPair option1 = {
         .key = "First",
-        .value = "1"
+        .value = "1",
     };
     kvPair option2 = {
         .key = "Second",
-        .value = "2"
+        .value = "2",
     };
     kvPair option3 = {
         .key = "Third",
-        .value = "3"
+        .value = "3",
     };
     const char* timeout = "5";
     const char* icon = "example";
@@ -314,13 +314,13 @@ TEST(Configuration, LongOptions)
         "-v",
         option3.value,
         "A title",
-        "A simple description"
+        "A simple description",
     };
     struct option longOptions[] = {
         {"option",       required_argument, 0, 'o'},
         {"value",        required_argument, 0, 'v'},
         {"timeout",      required_argument, 0, 't'},
-        {"icon",         required_argument, 0, 'i'}
+        {"icon",         required_argument, 0, 'i'},
     };
 
     Configuration c;
