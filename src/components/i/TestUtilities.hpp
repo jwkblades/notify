@@ -17,10 +17,10 @@
 #ifndef __NOTIFY_TEST_UTILITIES_H
 #define __NOTIFY_TEST_UTILITIES_H
 
-#include <gtest/gtest.h>
-
 #include <chrono>
 #include <iostream>
+
+#include <gtest/gtest.h>
 
 // Additional expect macros
 #define EXPECT_NULL(item) EXPECT_TRUE(NULL == item)

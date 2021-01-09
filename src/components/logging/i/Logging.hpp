@@ -17,9 +17,9 @@
 #ifndef __NOTIFY_LOGGING_H
 #define __NOTIFY_LOGGING_H
 
-#include <syslog.h>
-
 #include <sstream>
+
+#include <syslog.h>
 
 /**
  * Primary log interface
@@ -54,6 +54,7 @@ public:
      */
     template<typename T>
     Log& operator<<(const T& val);
+
 private:
     int mPriority;
     std::stringstream mStream;

@@ -21,9 +21,10 @@
 #include <cstring>
 
 #include <fcntl.h>
+#include <unistd.h>
+
 #include <sys/stat.h>
 #include <sys/wait.h>
-#include <unistd.h>
 
 const char* SubProcessTemplateException::what(void) const noexcept
 {
@@ -51,7 +52,7 @@ SubProcess::~SubProcess(void)
 {
     if (mPid == -1)
     {
-        delete [] mFilename;
+        delete[] mFilename;
         return;
     }
 
@@ -59,7 +60,7 @@ SubProcess::~SubProcess(void)
     {
         close(mStdout[1]);
         close(mStderr[1]);
-        delete [] mFilename;
+        delete[] mFilename;
     }
     else
     {
@@ -67,7 +68,7 @@ SubProcess::~SubProcess(void)
         close(mStderr[0]);
 
         unlink(mFilename);
-        delete [] mFilename;
+        delete[] mFilename;
     }
 }
 
@@ -97,7 +98,6 @@ const std::string& SubProcess::stderr(void)
 
 int SubProcess::run(void)
 {
-
     pipe(mStdout);
     pipe(mStderr);
 

@@ -17,10 +17,10 @@
 #ifndef __NOTIFY_SUB_PROCESS_H
 #define __NOTIFY_SUB_PROCESS_H
 
-#include <sys/types.h>
-
 #include <exception>
 #include <string>
+
+#include <sys/types.h>
 
 #define SUB_PROCESS_TEMPLATE_LENGTH 6
 
@@ -120,6 +120,7 @@ public:
      * @return The PID of the child process, or -1 on an error
      */
     int wait(void);
+
 private:
     pid_t mPid;
     char* mFilename;

@@ -29,4 +29,3 @@
 std::string sanitizeForBash(const char* s);
 
 #endif
-

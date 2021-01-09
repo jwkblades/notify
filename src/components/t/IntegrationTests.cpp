@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include "TestUtilities.hpp"
 #include "SubProcess.hpp"
+#include "TestUtilities.hpp"
 
 TEST(Integration, Script)
 {

@@ -15,6 +15,7 @@
  */
 
 #include "GUI.hpp"
+
 #include "Utilities.hpp"
 
 GUI::GUI(int argc, char** argv, const Configuration& cfg):
@@ -41,7 +42,6 @@ GUI::GUI(int argc, char** argv, const Configuration& cfg):
 
 GUI::~GUI(void)
 {
-
     notify_notification_close(mNotification, NULL);
     notify_uninit();
 }

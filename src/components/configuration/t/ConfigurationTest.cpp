@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-#include "TestUtilities.hpp"
 #include "Configuration.hpp"
+
+#include "TestUtilities.hpp"
 
 struct kvPair
 {
@@ -89,10 +90,10 @@ TEST(Configuration, OptionsMatched)
         "A simple description",
     };
     struct option longOptions[] = {
-        {"option",       required_argument, 0, 'o'},
-        {"value",        required_argument, 0, 'v'},
-        {"timeout",      required_argument, 0, 't'},
-        {"icon",         required_argument, 0, 'i'},
+        {"option", required_argument, 0, 'o'},
+        {"value", required_argument, 0, 'v'},
+        {"timeout", required_argument, 0, 't'},
+        {"icon", required_argument, 0, 'i'},
     };
 
     Configuration c;
@@ -141,10 +142,10 @@ TEST(Configuration, OptionsMaxMatched)
         "A simple description",
     };
     struct option longOptions[] = {
-        {"option",       required_argument, 0, 'o'},
-        {"value",        required_argument, 0, 'v'},
-        {"timeout",      required_argument, 0, 't'},
-        {"icon",         required_argument, 0, 'i'},
+        {"option", required_argument, 0, 'o'},
+        {"value", required_argument, 0, 'v'},
+        {"timeout", required_argument, 0, 't'},
+        {"icon", required_argument, 0, 'i'},
     };
 
     Configuration c;
@@ -206,10 +207,10 @@ TEST(Configuration, OptionsOverMaxMatched)
         "A simple description",
     };
     struct option longOptions[] = {
-        {"option",       required_argument, 0, 'o'},
-        {"value",        required_argument, 0, 'v'},
-        {"timeout",      required_argument, 0, 't'},
-        {"icon",         required_argument, 0, 'i'},
+        {"option", required_argument, 0, 'o'},
+        {"value", required_argument, 0, 'v'},
+        {"timeout", required_argument, 0, 't'},
+        {"icon", required_argument, 0, 'i'},
     };
 
     Configuration c;
@@ -259,10 +260,10 @@ TEST(Configuration, OptionsMismatched)
         "A simple description",
     };
     struct option longOptions[] = {
-        {"option",       required_argument, 0, 'o'},
-        {"value",        required_argument, 0, 'v'},
-        {"timeout",      required_argument, 0, 't'},
-        {"icon",         required_argument, 0, 'i'},
+        {"option", required_argument, 0, 'o'},
+        {"value", required_argument, 0, 'v'},
+        {"timeout", required_argument, 0, 't'},
+        {"icon", required_argument, 0, 'i'},
     };
 
     Configuration c;
@@ -317,10 +318,10 @@ TEST(Configuration, LongOptions)
         "A simple description",
     };
     struct option longOptions[] = {
-        {"option",       required_argument, 0, 'o'},
-        {"value",        required_argument, 0, 'v'},
-        {"timeout",      required_argument, 0, 't'},
-        {"icon",         required_argument, 0, 'i'},
+        {"option", required_argument, 0, 'o'},
+        {"value", required_argument, 0, 'v'},
+        {"timeout", required_argument, 0, 't'},
+        {"icon", required_argument, 0, 'i'},
     };
 
     Configuration c;

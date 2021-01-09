@@ -64,6 +64,7 @@ public:
      * exit.
      */
     void quit(void);
+
 private:
     bool mReady;
     Configuration mConfig;

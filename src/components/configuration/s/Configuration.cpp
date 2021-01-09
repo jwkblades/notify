@@ -15,6 +15,7 @@
  */
 
 #include "Configuration.hpp"
+
 #include <iostream>
 
 Configuration::Configuration(void):
@@ -55,38 +56,38 @@ void Configuration::parse(int argc, char** argv, const char* shortOptions, struc
 
         switch (c)
         {
-            case 'o':
-                if (optIndex >= MAX_OPTIONS)
-                {
-                    std::cerr << "Too many options specified. Only " << MAX_OPTIONS << " allowed." << std::endl;
-                }
-                else
-                {
-                    options[optIndex++] = optarg;
-                }
-                index += 2;
-                break;
-            case 'v':
-                if (valIndex >= MAX_OPTIONS)
-                {
-                    std::cerr << "Too many values specified. Only " << MAX_OPTIONS << " allowed." << std::endl;
-                }
-                else
-                {
-                    values[valIndex++] = optarg;
-                }
-                index += 2;
-                break;
-            case 't':
-                timeoutMinutes = std::stoull(optarg);
-                index += 2;
-                break;
-            case 'i':
-                icon = optarg;
-                index += 2;
-                break;
-            default:
-                return;
+        case 'o':
+            if (optIndex >= MAX_OPTIONS)
+            {
+                std::cerr << "Too many options specified. Only " << MAX_OPTIONS << " allowed." << std::endl;
+            }
+            else
+            {
+                options[optIndex++] = optarg;
+            }
+            index += 2;
+            break;
+        case 'v':
+            if (valIndex >= MAX_OPTIONS)
+            {
+                std::cerr << "Too many values specified. Only " << MAX_OPTIONS << " allowed." << std::endl;
+            }
+            else
+            {
+                values[valIndex++] = optarg;
+            }
+            index += 2;
+            break;
+        case 't':
+            timeoutMinutes = std::stoull(optarg);
+            index += 2;
+            break;
+        case 'i':
+            icon = optarg;
+            index += 2;
+            break;
+        default:
+            return;
         }
     }
 

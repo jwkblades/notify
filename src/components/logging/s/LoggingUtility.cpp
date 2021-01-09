@@ -15,6 +15,7 @@
  */
 
 #include "LoggingUtility.hpp"
+
 #include <cstdlib>
 
 class LogConnectionManager

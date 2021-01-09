@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
+#include "Utilities.hpp"
+
 #include "Application.hpp"
 #include "Logging.hpp"
-#include "Utilities.hpp"
 #include "UtilitiesPrivate.hpp"
 
 #include <chrono>
@@ -96,6 +97,5 @@ bool notificationExitNow(bool set)
 void teardown(void)
 {
     notificationExitNow(true);
-    Application::instance()->quit(); 
+    Application::instance()->quit();
 }
-

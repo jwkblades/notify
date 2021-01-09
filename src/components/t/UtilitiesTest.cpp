@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-#include "TestUtilities.hpp"
 #include "Utilities.hpp"
+
+#include "TestUtilities.hpp"
 
 TEST(Utilities, Usage)
 {

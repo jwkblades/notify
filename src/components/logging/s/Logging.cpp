@@ -15,6 +15,7 @@
  */
 
 #include "Logging.hpp"
+
 #include "LoggingUtility.hpp"
 
 Log::Log(int priority):

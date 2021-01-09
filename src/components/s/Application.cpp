@@ -15,6 +15,7 @@
  */
 
 #include "Application.hpp"
+
 #include "Logging.hpp"
 #include "ProcessUtilities.hpp"
 #include "SubProcess.hpp"
@@ -32,10 +33,10 @@ Application::Application(int argc, char** argv):
     static const std::string find("\"");
     static const std::string repl("\\\"");
     static struct option longOptions[] = {
-        {"option",       required_argument, 0, 'o'},
-        {"value",        required_argument, 0, 'v'},
-        {"timeout",      required_argument, 0, 't'},
-        {"icon",         required_argument, 0, 'i'},
+        {"option", required_argument, 0, 'o'},
+        {"value", required_argument, 0, 'v'},
+        {"timeout", required_argument, 0, 't'},
+        {"icon", required_argument, 0, 'i'},
     };
 
     mConfig.parse(argc, argv, "i:o:t:v:", longOptions);
@@ -47,7 +48,8 @@ Application::Application(int argc, char** argv):
 
     Log startupLog(LOG_NOTICE);
 
-    startupLog << "Notify is running in process " << getpid() << ", send it the following signals to interact:\r\n" << sanitizeForBash(mConfig.title) << "\r\n    " << sanitizeForBash(mConfig.description) << "\r\n    SIGRTMIN:   Default action\r\n";
+    startupLog << "Notify is running in process " << getpid() << ", send it the following signals to interact:\r\n"
+               << sanitizeForBash(mConfig.title) << "\r\n    " << sanitizeForBash(mConfig.description) << "\r\n    SIGRTMIN:   Default action\r\n";
     for (int i = 0; i < mConfig.optIndex && i < mConfig.MAX_OPTIONS; ++i)
     {
         startupLog << "    SIGRTMIN+" << (i + 1) << ": " << sanitizeForBash(mConfig.options[i]) << "\r\n";
@@ -106,36 +108,41 @@ void Application::setupSignalHandlers(void) const
 {
     struct sigaction hupOld = {};
     struct sigaction hupNew = {};
-    hupNew.sa_handler = [](int) -> void {
+    hupNew.sa_handler = [](int) -> void
+    {
         defaultExit();
     };
     sigaction(SIGHUP, &hupNew, &hupOld);
 
     struct sigaction rt0Old = {};
     struct sigaction rt0New = {};
-    rt0New.sa_handler = [](int) -> void {
+    rt0New.sa_handler = [](int) -> void
+    {
         Application::instance()->mGui->closeSignal();
     };
     sigaction(SIGRTMIN, &rt0New, &rt0Old);
 
     struct sigaction rt1Old = {};
     struct sigaction rt1New = {};
-    rt1New.sa_handler = [](int) -> void {
+    rt1New.sa_handler = [](int) -> void
+    {
         Application::instance()->mGui->closeFirstOption();
     };
-    sigaction(SIGRTMIN+1, &rt1New, &rt1Old);
+    sigaction(SIGRTMIN + 1, &rt1New, &rt1Old);
 
     struct sigaction rt2Old = {};
     struct sigaction rt2New = {};
-    rt2New.sa_handler = [](int) -> void {
+    rt2New.sa_handler = [](int) -> void
+    {
         Application::instance()->mGui->closeSecondOption();
     };
-    sigaction(SIGRTMIN+2, &rt2New, &rt2Old);
+    sigaction(SIGRTMIN + 2, &rt2New, &rt2Old);
 
     struct sigaction rt3Old = {};
     struct sigaction rt3New = {};
-    rt3New.sa_handler = [](int) -> void {
+    rt3New.sa_handler = [](int) -> void
+    {
         Application::instance()->mGui->closeThirdOption();
     };
-    sigaction(SIGRTMIN+3, &rt3New, &rt3Old);
+    sigaction(SIGRTMIN + 3, &rt3New, &rt3Old);
 }

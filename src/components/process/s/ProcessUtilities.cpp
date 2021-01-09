@@ -18,10 +18,10 @@
 
 std::string sanitizeForBash(const char* s)
 {
-    std::string ret="";
+    std::string ret = "";
     for (; *s; ++s)
     {
-        switch(*s)
+        switch (*s)
         {
         case '"':
             ret += "\\\"";

@@ -18,6 +18,7 @@
 #define __NOTIFY_CONFIGURATION_H
 
 #include <cstdlib>
+
 #include <getopt.h>
 
 #define CONFIGURATION_MAX_OPTIONS 3

@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-#include "TestUtilities.hpp"
 #include "ProcessUtilities.hpp"
+
 #include "SubProcess.hpp"
+#include "TestUtilities.hpp"
 
 TEST(ProcessUtilities, sanitizeForBash)
 {
@@ -32,16 +33,16 @@ TEST(ProcessUtilities, sanitizeForBash)
     };
 
 
-    for (const std::string& s : {
-            "test\"; exit 1",
-            "test\\\"; exit 1"
-            "test \" && exit 1",
-            "test $(exit 1)",
-            "$(pwd)",
-            "1.2.3\" | cut -d. -f1",
-            "test `pwd`",
-            "'test \" && true || false'"
-        })
+    for (const std::string& s: {
+             "test\"; exit 1",
+             "test\\\"; exit 1"
+             "test \" && exit 1",
+             "test $(exit 1)",
+             "$(pwd)",
+             "1.2.3\" | cut -d. -f1",
+             "test `pwd`",
+             "'test \" && true || false'",
+         })
     {
         helper(s);
     }

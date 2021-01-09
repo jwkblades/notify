@@ -83,6 +83,7 @@ public:
      * Callback used when the third option signal is sent (SIGRTMIN+3)
      */
     void closeThirdOption(void) const;
+
 private:
     NotifyNotification* mNotification;
     const Configuration& mConfig;
