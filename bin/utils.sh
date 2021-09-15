@@ -23,19 +23,19 @@ log()
 # Log a warning to stderr, colored yellow
 warning()
 {
-    log "$(tput setaf 3)$(tput bold)WARNING:$(tput sgr0)$(tput setaf 3)" ${@}
+    log "$(tput setaf 3)$(tput bold)WARNING:$(tput sgr0)$(tput setaf 3)" "${@}"
 }
 
 # Log an error to stderr, colored red
 error()
 {
-    log "$(tput setaf 1)$(tput bold)ERROR:$(tput sgr0)$(tput setaf 1)" ${@}
+    log "$(tput setaf 1)$(tput bold)ERROR:$(tput sgr0)$(tput setaf 1)" "${@}"
 }
 
 # Log an error, and exit with bad status
 die()
 {
-    error ${@}
+    error "${@}"
     exit 1
 }
 
@@ -55,7 +55,7 @@ abort()
 # Check if a command exists
 exists()
 {
-    which ${1} &>/dev/null
+    which "${1}" &>/dev/null
     return $?
 }
 
@@ -68,7 +68,7 @@ requires()
     local ret=0
     local app=""
     for app in ${@}; do
-        if ! exists ${app}; then
+        if ! exists "${app}"; then
             error "Unable to find required application '${app}'"
             ret=1
         fi
@@ -117,7 +117,7 @@ ticker()
     {
         local rc=${1:-1}
         kill ${tickerPid} 2>/dev/null || true
-        wait ${tickerPid} || true
+        wait ${tickerPid} 2>/dev/null || true
 
         if [[ ${rc} -eq 0 ]]; then
             echo -e "\r$(tput setaf 2)$(tput bold)[✓]$(tput sgr0)"
